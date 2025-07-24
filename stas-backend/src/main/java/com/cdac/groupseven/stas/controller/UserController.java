@@ -3,6 +3,7 @@ package com.cdac.groupseven.stas.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import com.cdac.groupseven.stas.entity.User;
 import com.cdac.groupseven.stas.repository.UserRepository;
 import com.cdac.groupseven.stas.service.UserService;
 
+//@CrossOrigin
 @RestController
 @RequestMapping("/api/auth")
 public class UserController {
