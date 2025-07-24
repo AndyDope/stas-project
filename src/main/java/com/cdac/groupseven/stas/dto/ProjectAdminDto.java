@@ -1,8 +1,9 @@
-package com.cdac.groupseven.stas.entity;
+package com.cdac.groupseven.stas.dto;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import com.cdac.groupseven.stas.entity.User;
 import com.cdac.groupseven.stas.enums.Status;
 
 import jakarta.persistence.Entity;
@@ -18,13 +19,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class Project {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProjectAdminDto {
     private Long id;
 
     private String title;
@@ -32,16 +29,18 @@ public class Project {
     private LocalDate startDate;
     private LocalDate endDate;
     
-    @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private User client;
-
-    @OneToMany(mappedBy = "project")
-    private List<ProjectMember> members;
-
-    @OneToMany(mappedBy = "project")
-    private List<Task> tasks;
+	public ProjectAdminDto(Long id, String title, String description, Status status, LocalDate startDate,
+			LocalDate endDate) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.status = status;
+	}
+    
+    
 }
