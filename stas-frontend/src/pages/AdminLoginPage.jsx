@@ -25,14 +25,16 @@ const AdminLoginPage = () => {
 
     try {
       const userData = await authService.login(formData);
-      
-      // *** Crucial Frontend Check ***
-      if (userData.role?.roleName === 'ADMIN') {
-        navigate('/admin/dashboard'); // Success, go to admin dashboard
-      } else {
-        setError('You do not have administrator privileges.');
-        authService.logout(); // Log out the non-admin user immediately
-      }
+      console.log(userData);
+
+			// *** Crucial Frontend Check ***
+			if (userData.roleName === "ADMIN") {
+				// navigate("/admin/dashboard"); // Success, go to admin dashboard
+				navigate("/dashboard"); // Success, go to admin dashboard
+			} else {
+				setError("You do not have administrator privileges.");
+				authService.logout(); // Log out the non-admin user immediately
+			}
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Check credentials.');
     } finally {
