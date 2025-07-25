@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Email already registered.");
         }
 
-        Role role = roleRepository.findByRoleName(dto.getRoleName())
+        Role role = roleRepository.findById(dto.getRoleId())
                 .orElseThrow(() -> new RuntimeException("Invalid role"));
 
         User user = new User();

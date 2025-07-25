@@ -1,5 +1,6 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import "./style.css";
 import Layout from './components/layout/Layout';
 import ManagerDashboardPage from './pages/ManagerDashboardPage';
 import ProjectListPage from './pages/ProjectListPage';

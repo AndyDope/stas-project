@@ -40,3 +40,15 @@
 .read-the-docs {
   color: #888;
 }
+
+ .css-s27nsf-MuiGrid-root .MuiGrid-root {
+    width: 48%;
+}
+
+.css-s27nsf-MuiGrid-root {
+    margin-top: 30px;
+}
+
+.css-1u8xl8z-MuiGrid-root .MuiGrid-root {
+    width: 23%;
+}

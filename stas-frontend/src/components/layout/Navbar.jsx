@@ -14,7 +14,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 // import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import logo from "../../assets/logo.svg";
 
-const Navbar = () => {
+const Navbar = ({ onSidebarToggle, sidebarOpen }) => {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 
@@ -39,10 +39,21 @@ const Navbar = () => {
 			sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
 		>
 			<Toolbar>
+				<IconButton
+					color="inherit"
+					aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+					onClick={onSidebarToggle}
+					edge="start"
+					sx={{ mr: 2 }}
+				>
+					{/* Use a simple icon for toggle, e.g., menu icon */}
+					<span style={{ fontSize: 24 }}>{sidebarOpen ? "<" : "≡"}</span>
+				</IconButton>
 				<Box
 					component="img"
 					src={logo}
 					alt="STAS Logo"
+					className="logo"
 					sx={{ height: 40, mr: 1 }}
 				/>
 

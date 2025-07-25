@@ -11,20 +11,46 @@ const ProjectListPage = () => {
   ];
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">My Projects</Typography>
-        <Button variant="contained" startIcon={<AddIcon />}>Create New Project</Button>
-      </Box>
-      <Grid container spacing={3}>
-        {projects.map((project) => (
-          <Grid item xs={12} sm={6} md={4} key={project.id}>
-            <ProjectCard project={project} />
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
-  );
+		<Box sx={{ width: "100%", px: { xs: 1, sm: 2, md: 3 }, py: 2 }}>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: { xs: "column", sm: "row" },
+					justifyContent: "space-between",
+					alignItems: { xs: "stretch", sm: "center" },
+					mb: 3,
+					gap: { xs: 2, sm: 0 },
+				}}
+			>
+				<Typography variant="h4" sx={{ fontSize: { xs: 24, sm: 28, md: 32 } }}>
+					My Projects
+				</Typography>
+				<Button
+					variant="contained"
+					startIcon={<AddIcon />}
+					sx={{ width: { xs: "100%", sm: "auto" } }}
+				>
+					Create New Project
+				</Button>
+			</Box>
+			<Grid container spacing={3}>
+				{projects.map((project) => (
+					<Grid
+						item
+						xs={12}
+						sm={6}
+						md={4}
+						key={project.id}
+						sx={{ display: "flex" }}
+					>
+						<Box sx={{ flex: 1, display: "flex" }}>
+							<ProjectCard project={project} />
+						</Box>
+					</Grid>
+				))}
+			</Grid>
+		</Box>
+	);
 };
 
 export default ProjectListPage;
