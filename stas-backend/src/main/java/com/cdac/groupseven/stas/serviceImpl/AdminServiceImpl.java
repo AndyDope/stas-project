@@ -39,7 +39,6 @@ public class AdminServiceImpl implements AdminService {
 
 		Role role = roleRepo.findByRoleName("Developer").orElse(null);
 		return userRepo.findByRole(role).get().size();
-
 	}
 
 	@Override

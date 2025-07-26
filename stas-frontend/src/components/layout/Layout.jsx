@@ -1,38 +1,43 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import { Box, CssBaseline, Toolbar } from "@mui/material";
-import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import { Box, CssBaseline, Toolbar } from '@mui/material';
+import Navbar from './Navbar';
+import Sidebar from './Sidebar';
+import Footer from './Footer';
 
-const Layout = () => {
-	return (
-		<Box sx={{ display: "flex" }}>
-			<CssBaseline />
-			<Navbar />
-			<Sidebar />
-			<Box
-				component="main"
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					flexGrow: 1,
-					p: 3,
-					width: "100%", // Take up full width of the remaining space
-					minHeight: "100vh",
-					overflowX: "hidden", // *** CRITICAL FIX: Prevents this container from scrolling horizontally ***
-				}}
-			>
-				<Toolbar />
+const drawerWidth = 240;
 
-				<Box sx={{ flexGrow: 1 }}>
-					<Outlet />
-				</Box>
+function Layout() {
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-				<Footer />
-			</Box>
-		</Box>
-	);
-};
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <Navbar drawerWidth={drawerWidth} onDrawerToggle={handleDrawerToggle} />
+      <Sidebar drawerWidth={drawerWidth} mobileOpen={mobileOpen} onDrawerToggle={handleDrawerToggle} />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ flexGrow: 1 }}>
+          <Outlet />
+        </Box>
+        <Footer />
+      </Box>
+    </Box>
+  );
+}
 
 export default Layout;
