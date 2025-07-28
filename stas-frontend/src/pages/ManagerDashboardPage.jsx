@@ -1,121 +1,138 @@
-import React from 'react';
-import { Box, Grid, Paper, Typography } from '@mui/material';
-import StatCard from '../components/dashboard/StatCard';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import PeopleIcon from '@mui/icons-material/People';
-import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import React from "react";
+import {
+	Box,
+	Grid,
+	Paper,
+	Typography,
+	List,
+	ListItem,
+	ListItemText,
+	Divider,
+	Chip,
+} from "@mui/material";
+import StatCard from "../components/dashboard/StatCard";
+
+// Import Icons
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import GroupIcon from "@mui/icons-material/Group";
+import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
+import PlaylistPlayIcon from "@mui/icons-material/PlaylistPlay";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
 
 const ManagerDashboardPage = () => {
-  const stats = { activeProjects: 3, teamMembers: 8, openTasks: 25, overdueTasks: 2 };
+	// Mock data - replace with API calls
+	const stats = {
+		myProjects: 4,
+		teamMembers: 8,
+		openTasks: 25,
+		overdueTasks: 2,
+	};
+	const teamWorkload = [
+		{ id: 1, name: "Alice", tasks: 8, status: "Overloaded" },
+		{ id: 2, name: "Bob", tasks: 2, status: "Underutilized" },
+		{ id: 3, name: "Charlie", tasks: 5, status: "Optimal" },
+	];
+	const highPriorityTasks = [
+		{ id: 1, title: "Fix login authentication bug", project: "API Refactor" },
+		{
+			id: 2,
+			title: "Deploy critical patch to production",
+			project: "New Mobile App",
+		},
+	];
 
-  return (
-		<Box sx={{ width: "100%", px: { xs: 1, sm: 2, md: 3 }, py: 2 }}>
-			<Typography
-				variant="h4"
-				sx={{ mb: 3, fontSize: { xs: 24, sm: 28, md: 32 } }}
-			>
+	return (
+		<Box>
+			<Typography variant="h4" sx={{ mb: 3 }}>
 				Manager Dashboard
 			</Typography>
-			{/* First row: 4 StatCards, responsive and equal width */}
+
+			{/* KPI Stat Cards */}
 			<Grid container spacing={3}>
-				{[
-					{
-						title: "My Active Projects",
-						value: stats.activeProjects,
-						icon: (
-							<AssessmentIcon
-								color="primary"
-								sx={{ fontSize: { xs: 32, md: 40 } }}
-							/>
-						),
-					},
-					{
-						title: "My Team Members",
-						value: stats.teamMembers,
-						icon: (
-							<PeopleIcon
-								color="primary"
-								sx={{ fontSize: { xs: 32, md: 40 } }}
-							/>
-						),
-					},
-					{
-						title: "Open Tasks",
-						value: stats.openTasks,
-						icon: (
-							<AssignmentIcon
-								color="primary"
-								sx={{ fontSize: { xs: 32, md: 40 } }}
-							/>
-						),
-					},
-					{
-						title: "Overdue Tasks",
-						value: stats.overdueTasks,
-						icon: (
-							<ReportProblemIcon
-								color="error"
-								sx={{ fontSize: { xs: 32, md: 40 } }}
-							/>
-						),
-					},
-				].map((stat, idx) => (
-					<Grid
-						item
-						xs={12}
-						sm={6}
-						md={3}
-						key={stat.title}
-						sx={{ display: "flex" }}
-					>
-						<Box sx={{ flex: 1, display: "flex" }}>
-							<StatCard
-								title={stat.title}
-								value={stat.value}
-								icon={stat.icon}
-								sx={{ flex: 1, width: "100%" }}
-							/>
-						</Box>
-					</Grid>
-				))}
+				<Grid item xs={12} sm={6} md={3}>
+					<StatCard
+						title="My Active Projects"
+						value={stats.myProjects}
+						icon={<AccountTreeIcon color="primary" />}
+					/>
+				</Grid>
+				<Grid item xs={12} sm={6} md={3}>
+					<StatCard
+						title="My Team Members"
+						value={stats.teamMembers}
+						icon={<GroupIcon color="primary" />}
+					/>
+				</Grid>
+				<Grid item xs={12} sm={6} md={3}>
+					<StatCard
+						title="Open Tasks"
+						value={stats.openTasks}
+						icon={<PlaylistPlayIcon color="primary" />}
+					/>
+				</Grid>
+				<Grid item xs={12} sm={6} md={3}>
+					<StatCard
+						title="Overdue Tasks"
+						value={stats.overdueTasks}
+						icon={<AssignmentLateIcon color="error" />}
+					/>
+				</Grid>
 			</Grid>
-			{/* Second row: 2 charts, responsive */}
+
+			{/* Second Row: More detailed stats */}
 			<Grid container spacing={3} sx={{ mt: 1 }}>
-				<Grid item xs={12} md={6} sx={{ display: "flex" }}>
-					<Paper
-						sx={{
-							p: { xs: 1, sm: 2 },
-							height: { xs: 200, sm: 280, md: 320 },
-							width: "100%",
-							display: "flex",
-							flexDirection: "column",
-							justifyContent: "center",
-							alignItems: "center",
-							flex: 1,
-						}}
-					>
-						<Typography sx={{ fontSize: { xs: 14, sm: 16 } }}>
-							Team Workload Bar Chart
+				<Grid item xs={12} md={7}>
+					<Paper sx={{ p: 2, height: "100%" }}>
+						<Typography variant="h6" gutterBottom>
+							High Priority / Overdue
 						</Typography>
+						<List>
+							{highPriorityTasks.map((task, index) => (
+								<React.Fragment key={task.id}>
+									<ListItem>
+										<ListItemText
+											primary={task.title}
+											secondary={`Project: ${task.project}`}
+										/>
+									</ListItem>
+									{index < highPriorityTasks.length - 1 && <Divider />}
+								</React.Fragment>
+							))}
+						</List>
 					</Paper>
 				</Grid>
-				<Grid item xs={12} md={6} sx={{ display: "flex" }}>
-					<Paper
-						sx={{
-							p: { xs: 1, sm: 2 },
-							height: { xs: 200, sm: 280, md: 320 },
-							width: "100%",
-							display: "flex",
-							flexDirection: "column",
-							justifyContent: "center",
-							alignItems: "center",
-							flex: 1,
-						}}
-					>
-						<Typography sx={{ fontSize: { xs: 14, sm: 16 } }}>
-							Project Status Donut Chart
+				<Grid item xs={12} md={5}>
+					<Paper sx={{ p: 2, height: "100%" }}>
+						<Typography variant="h6" gutterBottom>
+							Team Workload
 						</Typography>
+						<List>
+							{teamWorkload.map((member, index) => (
+								<React.Fragment key={member.id}>
+									<ListItem
+										secondaryAction={
+											<Chip
+												label={member.status}
+												color={
+													member.status === "Overloaded"
+														? "error"
+														: member.status === "Underutilized"
+														? "warning"
+														: "success"
+												}
+												size="small"
+											/>
+										}
+									>
+										<ListItemText
+											primary={member.name}
+											secondary={`${member.tasks} tasks assigned`}
+										/>
+									</ListItem>
+									{index < teamWorkload.length - 1 && <Divider />}
+								</React.Fragment>
+							))}
+						</List>
 					</Paper>
 				</Grid>
 			</Grid>

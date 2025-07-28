@@ -1,30 +1,47 @@
-// src/services/authService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:80/api/auth'; // Your backend URL
+const API_URL = 'http://localhost:80/api/auth';
 
 const register = (userData) => {
-  // userData: { name, email, password, roleId }
-  return axios.post(`${API_URL}/register`, userData);
+    return axios.post(`${API_URL}/register`, userData);
 };
 
 const login = (credentials) => {
-  // credentials: { email, password }
-  return axios.post(`${API_URL}/login`, credentials).then((response) => {
-    if (response.data.token) {
-      // Store user info and JWT token
-      localStorage.setItem('user', JSON.stringify(response.data));
-    }
-    return response.data;
-  });
+    return axios.post(`${API_URL}/login`, credentials).then((response) => {
+        // The raw data from your backend API
+        const flatData = response.data;
+
+        // *** THIS IS THE CRITICAL TRANSFORMATION STEP ***
+        // We create a standardized object that our frontend expects.
+        const standardizedData = {
+            token: flatData.token,
+            user: {
+                id: flatData.id,
+                name: flatData.name,
+                email: flatData.email,
+                // We create the nested 'role' object here
+                role: {
+                    roleName: flatData.roleName
+                }
+            }
+        };
+
+        // We store the NEW, standardized object in localStorage
+        if (standardizedData.token) {
+            localStorage.setItem('user', JSON.stringify(standardizedData));
+        }
+
+        // We return the NEW, standardized object to the AuthContext
+        return standardizedData;
+    });
 };
 
 const logout = () => {
-  localStorage.removeItem('user');
+    localStorage.removeItem('user');
 };
 
 export default {
-  register,
-  login,
-  logout,
+    register,
+    login,
+    logout,
 };

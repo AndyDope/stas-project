@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
         response.setName(user.getName());
         response.setEmail(user.getEmail());
         response.setRoleName(user.getRole().getRoleName());
+        response.setToken("abc-xyz");
 
         return response;
     }

@@ -1,37 +1,34 @@
 import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom"; // Import NavLink for the logo link
 import {
 	AppBar,
 	Toolbar,
 	Typography,
-	Box,
 	IconButton,
-	Badge,
+	Box,
 	Menu,
 	MenuItem,
 } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-// import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import { useAuth } from "../../context/AuthContext";
+
+// 1. Re-import your logo. Make sure this path is correct relative to Navbar.jsx!
 import logo from "../../assets/logo.svg";
 
-const Navbar = ({ onSidebarToggle, sidebarOpen }) => {
+function Navbar({ onDrawerToggle }) {
 	const [anchorEl, setAnchorEl] = useState(null);
+	const { user, logout } = useAuth();
+	const navigate = useNavigate();
 	const open = Boolean(anchorEl);
 
-	const handleMenu = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
+	const handleMenu = (event) => setAnchorEl(event.currentTarget);
+	const handleClose = () => setAnchorEl(null);
 	const handleLogout = () => {
-		// Add your logout logic from AuthContext here
+		logout();
+		navigate("/login");
 		handleClose();
 	};
-
-	// Import the logo SVG
 
 	return (
 		<AppBar
@@ -41,50 +38,57 @@ const Navbar = ({ onSidebarToggle, sidebarOpen }) => {
 			<Toolbar>
 				<IconButton
 					color="inherit"
-					aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-					onClick={onSidebarToggle}
+					aria-label="open drawer"
 					edge="start"
-					sx={{ mr: 2 }}
+					onClick={onDrawerToggle}
+					sx={{ mr: 2, display: { sm: "none" } }}
 				>
-					{/* Use a simple icon for toggle, e.g., menu icon */}
-					<span style={{ fontSize: 24 }}>{sidebarOpen ? "<" : "≡"}</span>
+					<MenuIcon />
 				</IconButton>
-				<Box
-					component="img"
-					src={logo}
-					alt="STAS Logo"
-					className="logo"
-					sx={{ height: 40, mr: 1 }}
-				/>
 
-				<Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-					Skill-based Task Allocation System
+				{/* 2. (Optional but Recommended) Wrap logo and title in a link */}
+				<Box
+					component={NavLink}
+					to="/"
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						textDecoration: "none",
+						color: "inherit",
+						flexGrow: 1,
+					}}
+				>
+					{/* 3. Add the logo image back */}
+					<Box
+						component="img"
+						src={logo}
+						alt="STAS Logo"
+						sx={{ height: 40, mr: 2 }}
+					/>
+					<Typography variant="h6" noWrap component="div">
+						STAS
+					</Typography>
+				</Box>
+
+				<Typography sx={{ mr: 2, display: { xs: "none", sm: "block" } }}>
+					Welcome, {user?.name || "Guest"}
 				</Typography>
 
-				<Box>
-					{/* <IconButton size="large" color="inherit">
-            <Badge badgeContent={4} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton> */}
-					<IconButton size="large" onClick={handleMenu} color="inherit">
-						<AccountCircle />
-					</IconButton>
-					<Menu
-						anchorEl={anchorEl}
-						open={open}
-						onClose={handleClose}
-						anchorOrigin={{ vertical: "top", horizontal: "right" }}
-						transformOrigin={{ vertical: "top", horizontal: "right" }}
-						sx={{ mt: "45px" }}
-					>
-						<MenuItem onClick={handleClose}>Profile</MenuItem>
-						<MenuItem onClick={handleLogout}>Logout</MenuItem>
-					</Menu>
-				</Box>
+				<IconButton size="large" onClick={handleMenu} color="inherit">
+					<AccountCircle />
+				</IconButton>
+				<Menu
+					anchorEl={anchorEl}
+					open={open}
+					onClose={handleClose}
+					sx={{ mt: "45px" }}
+				>
+					<MenuItem onClick={handleClose}>Profile</MenuItem>
+					<MenuItem onClick={handleLogout}>Logout</MenuItem>
+				</Menu>
 			</Toolbar>
 		</AppBar>
 	);
-};
+}
 
 export default Navbar;
