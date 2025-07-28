@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.cdac.groupseven.stas.dto.UserLoginRequestDto;
 import com.cdac.groupseven.stas.dto.UserResponseDto;
 import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
+import com.cdac.groupseven.stas.dto.UserUpdateDto;
 import com.cdac.groupseven.stas.entity.Role;
 import com.cdac.groupseven.stas.entity.User;
 import com.cdac.groupseven.stas.repository.RoleRepository;
@@ -73,4 +74,23 @@ public class UserServiceImpl implements UserService {
 
         return response;
     }
+    
+	@Override
+	public UserResponseDto updateDetails(UserUpdateDto data) {
+
+		User user = userRepository.findById(data.getId()).get();
+		user.setName(data.getName());
+		user.setEmail(data.getEmail());
+		
+		userRepository.save(user);
+
+		UserResponseDto response = new UserResponseDto();		
+		response.setId(user.getId());
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+        response.setRoleName(user.getRole().getRoleName());
+        response.setToken("abc-xyz");
+		
+		return response;
+	}
 }

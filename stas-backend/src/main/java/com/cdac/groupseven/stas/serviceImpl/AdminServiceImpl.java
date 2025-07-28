@@ -1,17 +1,14 @@
 package com.cdac.groupseven.stas.serviceImpl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cdac.groupseven.stas.dto.ProjectAdminDto;
-import com.cdac.groupseven.stas.entity.Project;
 import com.cdac.groupseven.stas.entity.Role;
-import com.cdac.groupseven.stas.entity.User;
-import com.cdac.groupseven.stas.enums.Status;
+import com.cdac.groupseven.stas.enums.ProjectStatus;
 import com.cdac.groupseven.stas.repository.ProjectRepository;
 import com.cdac.groupseven.stas.repository.RoleRepository;
 import com.cdac.groupseven.stas.repository.UserRepository;
@@ -44,8 +41,8 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public int getTotalActiveProjectsCount() {
-		int count = projectRepo.findByStatus(Status.Ongoing).get().size();
-		count += projectRepo.findByStatus(Status.Delayed).get().size();
+		int count = projectRepo.findByStatus(ProjectStatus.ONGOING).get().size();
+		count += projectRepo.findByStatus(ProjectStatus.DELAYED).get().size();
 		return count;
 	}
 

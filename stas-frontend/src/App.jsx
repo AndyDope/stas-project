@@ -6,7 +6,7 @@ import Layout from "./components/layout/Layout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PublicRoute from "./components/auth/PublicRoute";
 import RoleBasedRoute from "./components/auth/RoleBasedRoute";
-import DashboardRedirect from "./components/auth/DashboardRedirect"; // Import the new component
+import DashboardRedirect from "./components/auth/DashboardRedirect";
 
 // Pages
 import LoginPage from "./pages/LoginPage";
@@ -16,10 +16,11 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import UserManagementPage from "./pages/UserManagementPage";
 import ManagerDashboardPage from "./pages/ManagerDashboardPage";
 import ClientDashboardPage from "./pages/ClientDashboardPage";
-import DeveloperDashboardPage from "./pages/DeveloperDashboardPage"; // Import the new page
+import DeveloperDashboardPage from "./pages/DeveloperDashboardPage";
 import MyProjectsPage from "./pages/MyProjectsPage";
 import CreateProjectPage from "./pages/CreateProjectPage";
 import DeveloperTasksPage from "./pages/DeveloperTasksPage";
+import MyProfilePage from "./pages/MyProfilePage";
 
 function App() {
 	return (
@@ -35,6 +36,8 @@ function App() {
 						<Route element={<Layout />}>
 							{/* THIS IS THE FIX: Use the dynamic redirect component */}
 							<Route index element={<DashboardRedirect />} />
+
+							<Route path="profile" element={<MyProfilePage />} />
 
 							<Route element={<RoleBasedRoute allowedRoles={["ADMIN"]} />}>
 								<Route

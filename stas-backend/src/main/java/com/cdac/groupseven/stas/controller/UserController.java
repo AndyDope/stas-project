@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cdac.groupseven.stas.dto.UserLoginRequestDto;
 import com.cdac.groupseven.stas.dto.UserResponseDto;
 import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
+import com.cdac.groupseven.stas.dto.UserUpdateDto;
 import com.cdac.groupseven.stas.entity.User;
 import com.cdac.groupseven.stas.repository.UserRepository;
 import com.cdac.groupseven.stas.service.UserService;
@@ -40,13 +41,23 @@ public class UserController {
     }
     
     @PostMapping("/login")
-    public UserResponseDto login(@RequestBody UserLoginRequestDto dto) {
-        return userService.login(dto);
+    public ResponseEntity<UserResponseDto> login(@RequestBody UserLoginRequestDto dto) {
+        return ResponseEntity.ok(userService.login(dto));
     }
     
     @GetMapping("/all")
     public List<User> getAllUsers() {
 		return userRepository.findAll();
 		
+    }
+    
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDto> updateProfile(@RequestBody UserUpdateDto dto) {
+        try {
+			UserResponseDto user = userService.updateDetails(dto);
+			return ResponseEntity.ok(user);
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().build();
+		}
     }
 }

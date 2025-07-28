@@ -26,6 +26,7 @@ const navConfig = {
 			path: "/admin/dashboard",
 		},
 		{ text: "User Management", icon: <PeopleIcon />, path: "/admin/users" },
+		{ text: "My Profile", icon: <SettingsIcon />, path: "/profile" },
 	],
 	MANAGER: [
 		{ text: "Dashboard", icon: <DashboardIcon />, path: "/manager/dashboard" },
@@ -34,6 +35,7 @@ const navConfig = {
 			icon: <AccountTreeIcon />,
 			path: "/manager/projects",
 		},
+		{ text: "My Profile", icon: <SettingsIcon />, path: "/profile" },
 	],
 	CLIENT: [
 		{ text: "Dashboard", icon: <DashboardIcon />, path: "/client/dashboard" },
@@ -47,6 +49,7 @@ const navConfig = {
 			icon: <AddCircleOutlineIcon />,
 			path: "/client/create-project",
 		},
+		{ text: "My Profile", icon: <SettingsIcon />, path: "/profile" },
 	],
 	DEVELOPER: [
 		{
@@ -55,7 +58,7 @@ const navConfig = {
 			path: "/developer/dashboard",
 		},
 		{ text: "My Tasks", icon: <AccountTreeIcon />, path: "/developer/tasks" },
-		{ text: "My Profile", icon: <SettingsIcon />, path: "/developer/profile" },
+		{ text: "My Profile", icon: <SettingsIcon />, path: "/profile" },
 	],
 };
 

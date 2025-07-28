@@ -83,7 +83,9 @@ function Navbar({ onDrawerToggle }) {
 					onClose={handleClose}
 					sx={{ mt: "45px" }}
 				>
-					<MenuItem onClick={handleClose}>Profile</MenuItem>
+					<MenuItem component={NavLink} to="/profile" onClick={handleClose}>
+						Profile
+					</MenuItem>
 					<MenuItem onClick={handleLogout}>Logout</MenuItem>
 				</Menu>
 			</Toolbar>

@@ -9,12 +9,12 @@ export const AuthProvider = ({ children }) => {
 
 	useEffect(() => {
 		try {
-			// This now correctly reads the standardized object from localStorage
 			const storedData = JSON.parse(localStorage.getItem("user"));
 			if (storedData && storedData.user) {
 				setUser(storedData.user);
 			}
 		} catch (error) {
+			console.error("Failed to parse user from localStorage", error);
 			localStorage.removeItem("user");
 		}
 		setIsLoading(false);
@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
 
 	const login = async (credentials) => {
 		const responseData = await authService.login(credentials);
-		// This now receives the standardized object and works correctly
 		if (responseData && responseData.user) {
 			setUser(responseData.user);
 		}
@@ -34,7 +33,34 @@ export const AuthProvider = ({ children }) => {
 		setUser(null);
 	};
 
-	const value = { user, login, logout, isAuthenticated: !!user, isLoading };
+	// This function updates the user state and syncs it with localStorage.
+	const updateUser = (newUserData) => {
+		console.log(newUserData);
+
+		// Create a new object to guarantee a state change triggers re-renders
+		const updatedUser = { ...user, ...newUserData };
+		setUser(updatedUser);
+
+		try {
+			const storedData = JSON.parse(localStorage.getItem("user"));
+			if (storedData) {
+				// Update the 'user' property within the stored object
+				const updatedStorage = { ...storedData, user: updatedUser };
+				localStorage.setItem("user", JSON.stringify(updatedStorage));
+			}
+		} catch (error) {
+			console.error("Failed to update user in localStorage", error);
+		}
+	};
+
+	const value = {
+		user,
+		login,
+		logout,
+		updateUser,
+		isAuthenticated: !!user,
+		isLoading,
+	};
 
 	return (
 		<AuthContext.Provider value={value}>

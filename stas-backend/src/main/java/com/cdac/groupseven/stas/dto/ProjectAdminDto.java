@@ -2,7 +2,7 @@ package com.cdac.groupseven.stas.dto;
 
 import java.time.LocalDate;
 
-import com.cdac.groupseven.stas.enums.Status;
+import com.cdac.groupseven.stas.enums.ProjectStatus;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,9 +17,9 @@ public class ProjectAdminDto {
     private LocalDate startDate;
     private LocalDate endDate;
     
-    private Status status;
+    private ProjectStatus status;
 
-	public ProjectAdminDto(Long id, String title, String description, Status status, LocalDate startDate,
+	public ProjectAdminDto(Long id, String title, String description, ProjectStatus status, LocalDate startDate,
 			LocalDate endDate) {
 		super();
 		this.id = id;
