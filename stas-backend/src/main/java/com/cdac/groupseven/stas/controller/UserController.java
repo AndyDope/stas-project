@@ -3,6 +3,7 @@ package com.cdac.groupseven.stas.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,11 +29,16 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     
-    @PostMapping("/signup")
-    public UserResponseDto signup(@RequestBody UserSignupRequestDto dto) {
-        return userService.signup(dto);
+    @PostMapping("/register")
+    public ResponseEntity<UserResponseDto> signup(@RequestBody UserSignupRequestDto dto) {
+        try {
+			UserResponseDto user = userService.signup(dto);
+			return ResponseEntity.ok(user);
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().build();
+		}
     }
-
+    
     @PostMapping("/login")
     public UserResponseDto login(@RequestBody UserLoginRequestDto dto) {
         return userService.login(dto);

@@ -1,58 +1,94 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Box, IconButton, Badge, Menu, MenuItem } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom"; // Import NavLink for the logo link
+import {
+	AppBar,
+	Toolbar,
+	Typography,
+	IconButton,
+	Box,
+	Menu,
+	MenuItem,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import { useAuth } from "../../context/AuthContext";
 
-const Navbar = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+// 1. Re-import your logo. Make sure this path is correct relative to Navbar.jsx!
+import logo from "../../assets/logo.svg";
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+function Navbar({ onDrawerToggle }) {
+	const [anchorEl, setAnchorEl] = useState(null);
+	const { user, logout } = useAuth();
+	const navigate = useNavigate();
+	const open = Boolean(anchorEl);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+	const handleMenu = (event) => setAnchorEl(event.currentTarget);
+	const handleClose = () => setAnchorEl(null);
+	const handleLogout = () => {
+		logout();
+		navigate("/login");
+		handleClose();
+	};
 
-  const handleLogout = () => {
-    // Add your logout logic from AuthContext here
-    handleClose();
-  };
+	return (
+		<AppBar
+			position="fixed"
+			sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+		>
+			<Toolbar>
+				<IconButton
+					color="inherit"
+					aria-label="open drawer"
+					edge="start"
+					onClick={onDrawerToggle}
+					sx={{ mr: 2, display: { sm: "none" } }}
+				>
+					<MenuIcon />
+				</IconButton>
 
-  return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      <Toolbar>
-        <TaskAltIcon sx={{ mr: 1 }} />
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          STAS - Mission Control
-        </Typography>
+				{/* 2. (Optional but Recommended) Wrap logo and title in a link */}
+				<Box
+					component={NavLink}
+					to="/"
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						textDecoration: "none",
+						color: "inherit",
+						flexGrow: 1,
+					}}
+				>
+					{/* 3. Add the logo image back */}
+					<Box
+						component="img"
+						src={logo}
+						alt="STAS Logo"
+						sx={{ height: 40, mr: 2 }}
+					/>
+					<Typography variant="h6" noWrap component="div">
+						STAS
+					</Typography>
+				</Box>
 
-        <Box>
-          {/* <IconButton size="large" color="inherit">
-            <Badge badgeContent={4} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton> */}
-          <IconButton size="large" onClick={handleMenu} color="inherit">
-            <AccountCircle />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            sx={{ mt: '45px' }}
-          >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
-};
+				<Typography sx={{ mr: 2, display: { xs: "none", sm: "block" } }}>
+					Welcome, {user?.name || "Guest"}
+				</Typography>
+
+				<IconButton size="large" onClick={handleMenu} color="inherit">
+					<AccountCircle />
+				</IconButton>
+				<Menu
+					anchorEl={anchorEl}
+					open={open}
+					onClose={handleClose}
+					sx={{ mt: "45px" }}
+				>
+					<MenuItem onClick={handleClose}>Profile</MenuItem>
+					<MenuItem onClick={handleLogout}>Logout</MenuItem>
+				</Menu>
+			</Toolbar>
+		</AppBar>
+	);
+}
 
 export default Navbar;

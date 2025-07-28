@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Email already registered.");
         }
 
-        Role role = roleRepository.findByRoleName(dto.getRoleName())
+        Role role = roleRepository.findById(dto.getRoleId())
                 .orElseThrow(() -> new RuntimeException("Invalid role"));
 
         User user = new User();
@@ -56,9 +56,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().getRoleName().equalsIgnoreCase(dto.getRoleName())) {
-            throw new RuntimeException("Role mismatch");
-        }
+//        if (!user.getRole().getRoleName().equalsIgnoreCase(dto.getRoleName())) {
+//            throw new RuntimeException("Role mismatch");
+//        }
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
         response.setName(user.getName());
         response.setEmail(user.getEmail());
         response.setRoleName(user.getRole().getRoleName());
+        response.setToken("abc-xyz");
 
         return response;
     }
