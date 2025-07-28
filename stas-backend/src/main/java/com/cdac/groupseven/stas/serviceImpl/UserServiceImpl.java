@@ -59,10 +59,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().getRoleName().equalsIgnoreCase(dto.getRoleName())) {
-            throw new RuntimeException("Role mismatch");
-        }
-
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
