@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cdac.groupseven.stas.dto.ProjectAdminDto;
+import com.cdac.groupseven.stas.dto.ProjectDto;
 import com.cdac.groupseven.stas.entity.Project;
 import com.cdac.groupseven.stas.service.AdminService;
 
@@ -38,7 +38,7 @@ public class AdminController {
 	}
 	
 	@GetMapping("/getAllProjects")
-	public List<ProjectAdminDto> getAllProjects() {
+	public List<ProjectDto> getAllProjects() {
 		return admin.getAllProjects();
 	}
 }

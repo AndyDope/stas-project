@@ -22,63 +22,63 @@ import CreateProjectPage from "./pages/CreateProjectPage";
 import DeveloperTasksPage from "./pages/DeveloperTasksPage";
 
 function App() {
-	return (
-		<AuthProvider>
-			<BrowserRouter>
-				<Routes>
-					<Route element={<PublicRoute />}>
-						<Route path="/login" element={<LoginPage />} />
-						<Route path="/register" element={<RegisterPage />} />
-					</Route>
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Route>
 
-					<Route path="/" element={<ProtectedRoute />}>
-						<Route element={<Layout />}>
-							{/* THIS IS THE FIX: Use the dynamic redirect component */}
-							<Route index element={<DashboardRedirect />} />
+          <Route path="/" element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              {/* THIS IS THE FIX: Use the dynamic redirect component */}
+              <Route index element={<DashboardRedirect />} />
 
-							<Route element={<RoleBasedRoute allowedRoles={["ADMIN"]} />}>
-								<Route
-									path="admin/dashboard"
-									element={<AdminDashboardPage />}
-								/>
-								<Route path="admin/users" element={<UserManagementPage />} />
-							</Route>
-							<Route element={<RoleBasedRoute allowedRoles={["MANAGER"]} />}>
-								<Route
-									path="manager/dashboard"
-									element={<ManagerDashboardPage />}
-								/>
-								<Route path="manager/projects" element={<MyProjectsPage />} />
-							</Route>
-							<Route element={<RoleBasedRoute allowedRoles={["CLIENT"]} />}>
-								<Route
-									path="client/dashboard"
-									element={<ClientDashboardPage />}
-								/>
-								<Route path="client/projects" element={<MyProjectsPage />} />
-								<Route
-									path="client/create-project"
-									element={<CreateProjectPage />}
-								/>
-							</Route>
-							<Route element={<RoleBasedRoute allowedRoles={["DEVELOPER"]} />}>
-								<Route
-									path="developer/dashboard"
-									element={<DeveloperDashboardPage />}
-								/>
-								<Route
-									path="developer/tasks"
-									element={<DeveloperTasksPage />}
-								/>
-							</Route>
-						</Route>
-					</Route>
+              <Route element={<RoleBasedRoute allowedRoles={["ADMIN"]} />}>
+                <Route
+                  path="admin/dashboard"
+                  element={<AdminDashboardPage />}
+                />
+                <Route path="admin/users" element={<UserManagementPage />} />
+              </Route>
+              <Route element={<RoleBasedRoute allowedRoles={["MANAGER"]} />}>
+                <Route
+                  path="manager/dashboard"
+                  element={<ManagerDashboardPage />}
+                />
+                <Route path="manager/projects" element={<MyProjectsPage />} />
+              </Route>
+              <Route element={<RoleBasedRoute allowedRoles={["CLIENT"]} />}>
+                <Route
+                  path="client/dashboard"
+                  element={<ClientDashboardPage />}
+                />
+                <Route path="client/projects" element={<MyProjectsPage />} />
+                <Route
+                  path="client/create-project"
+                  element={<CreateProjectPage />}
+                />
+              </Route>
+              <Route element={<RoleBasedRoute allowedRoles={["DEVELOPER"]} />}>
+                <Route
+                  path="developer/dashboard"
+                  element={<DeveloperDashboardPage />}
+                />
+                <Route
+                  path="developer/tasks"
+                  element={<DeveloperTasksPage />}
+                />
+              </Route>
+            </Route>
+          </Route>
 
-					<Route path="/unauthorized" element={<UnauthorizedPage />} />
-				</Routes>
-			</BrowserRouter>
-		</AuthProvider>
-	);
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
 
 export default App;
