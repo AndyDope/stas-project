@@ -24,6 +24,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private JWTService jwtService;
 
     @Override
     public UserResponseDto signup(UserSignupRequestDto dto) {
@@ -56,20 +59,25 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-//        if (!user.getRole().getRoleName().equalsIgnoreCase(dto.getRoleName())) {
-//            throw new RuntimeException("Role mismatch");
-//        }
+        if (!user.getRole().getRoleName().equalsIgnoreCase(dto.getRoleName())) {
+            throw new RuntimeException("Role mismatch");
+        }
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
+        String token = jwtService.generateToken(user.getEmail());
+
+        // 4. Create the response DTO and include the token
         UserResponseDto response = new UserResponseDto();
         response.setId(user.getId());
         response.setName(user.getName());
         response.setEmail(user.getEmail());
         response.setRoleName(user.getRole().getRoleName());
+        response.setJwtToken(token); // <-- SET THE TOKEN
 
         return response;
+
     }
 }

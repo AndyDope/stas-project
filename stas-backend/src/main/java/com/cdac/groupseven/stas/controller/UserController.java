@@ -20,7 +20,6 @@ import com.cdac.groupseven.stas.service.UserService;
 
 //@CrossOrigin
 @RestController
-@RequestMapping("/api/auth")
 public class UserController {
 
     @Autowired
