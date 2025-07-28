@@ -11,5 +11,5 @@ public class UserSignupRequestDto {
     private String name;
     private String email;
     private String password;
-    private String roleName; // e.g., "Developer", "Manager", etc.
+    private Long roleId; // e.g., "Developer", "Manager", etc.
 }

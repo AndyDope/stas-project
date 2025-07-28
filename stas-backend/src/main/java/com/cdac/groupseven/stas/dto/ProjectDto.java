@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ProjectAdminDto {
+public class ProjectDto {
     private Long id;
 
     private String title;
@@ -31,7 +31,7 @@ public class ProjectAdminDto {
     
     private Status status;
 
-	public ProjectAdminDto(Long id, String title, String description, Status status, LocalDate startDate,
+	public ProjectDto(Long id, String title, String description, Status status, LocalDate startDate,
 			LocalDate endDate) {
 		super();
 		this.id = id;

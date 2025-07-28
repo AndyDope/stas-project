@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cdac.groupseven.stas.dto.ProjectAdminDto;
+import com.cdac.groupseven.stas.dto.ProjectDto;
 import com.cdac.groupseven.stas.entity.Project;
 import com.cdac.groupseven.stas.entity.Role;
 import com.cdac.groupseven.stas.entity.User;
@@ -50,9 +50,9 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public List<ProjectAdminDto> getAllProjects() {
+	public List<ProjectDto> getAllProjects() {
 	    return projectRepo.findAll().stream()
-	            .map(project -> new ProjectAdminDto(
+	            .map(project -> new ProjectDto(
 	                    project.getId(),
 	                    project.getTitle(),
 	                    project.getDescription(),
