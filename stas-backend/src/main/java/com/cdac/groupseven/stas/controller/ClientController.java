@@ -1,0 +1,43 @@
+package com.cdac.groupseven.stas.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cdac.groupseven.stas.dto.ProjectDto;
+import com.cdac.groupseven.stas.service.ClientService;
+import com.cdac.groupseven.stas.service.ProjectService;
+
+@RestController
+@RequestMapping("/api/client")
+public class ClientController {
+	
+	@Autowired
+	ClientService clientService;
+	
+	@Autowired
+	ProjectService projectService; 
+	
+	@GetMapping("/dashboard-data")
+	public ResponseEntity<Object> getClientDashboardData(@RequestParam(value = "id") Long id) {
+		return ResponseEntity.ok(clientService.getClientDashboardData(id));
+	}
+	
+	@GetMapping("/projects")
+	public ResponseEntity<Object> getClientProjects(
+            // @RequestParam tells Spring to look for "?page=..." in the URL			
+			@RequestParam(value = "id") Long id, 
+            @RequestParam(value = "page", defaultValue = "0") int page, 
+            @RequestParam(value = "limit", defaultValue = "5") int limit) {
+		
+        // Now you can use the 'page' and 'limit' variables to fetch data
+        // Your service layer would handle the database query
+//        Page<ProjectDto> projectPage = projectService.findProjectsForClient(id, page, limit);		
+//        return ResponseEntity.ok(projectPage);
+		return ResponseEntity.ok(projectService.findProjectsForClient(id, page, limit));
+	}
+}

@@ -16,8 +16,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 import SyncIcon from "@mui/icons-material/Sync";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
-import dsahboardService from "../services/dashboadService";
-import dashboadService from "../services/dashboadService";
+import clientService from "../services/clientService";
 
 const ClientDashboardPage = () => {
 	const [stats, setStats] = useState({
@@ -35,10 +34,12 @@ const ClientDashboardPage = () => {
 		const fetchDashboardData = async () => {
 			try {
 				// The await keyword "waits" for the promise to resolve
-				const response = await dashboadService.getClientDashboardStats();
+				const response = await clientService.getClientDashboardStats();
+
+				console.log(response.data);
 
 				// The actual data is in response.data
-				setStats(response.data);
+				setStats(response.data.stats);
 				setRecentProjects(response.data.recentProjects);
 			} catch (err) {
 				setError("Failed to load dashboard data. Please try again later.");
@@ -90,7 +91,7 @@ const ClientDashboardPage = () => {
 			<Grid container spacing={3}>
 				<Grid item xs={12} sm={6} md={3}>
 					<StatCard
-						title="Total Projects"
+						title="Pending Projects"
 						value={stats.pending}
 						icon={<FolderIcon color="warning" />}
 					/>

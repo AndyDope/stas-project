@@ -13,17 +13,37 @@ import {
 } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-const getStatusChipColor = (status) => {
+// *** THIS IS THE UPDATED FUNCTION ***
+// It now returns a style object with specific background colors to match your chart.
+const getStatusChipStyles = (status) => {
+	// Default style for unknown statuses
+	const style = {
+		color: "#fff", // White text for good contrast
+		fontWeight: "bold",
+	};
+
 	switch (status) {
-		case "Completed":
-			return "success";
-		case "At Risk":
-			return "warning";
-		case "On Hold":
-			return "default";
+		case "COMPLETED":
+			style.backgroundColor = "#10B981"; // Green
+			break;
+		case "ONGOING": // This is the backend equivalent of 'Active'
+			style.backgroundColor = "#3B82F6"; // Blue
+			break;
+		case "PENDING":
+			style.backgroundColor = "#F59E0B"; // Amber
+			break;
+		case "DELAYED": // Assuming 'DELAYED' or 'AT RISK' corresponds to 'Overdue'
+		case "AT RISK":
+			style.backgroundColor = "#EF4444"; // Red
+			break;
+		case "ONHOLD":
+			style.backgroundColor = "#6B7286"; // Medium Gray
+			break;
 		default:
-			return "primary";
+			style.backgroundColor = "#9E9E9E"; // A neutral gray
+			break;
 	}
+	return style;
 };
 
 const ProjectListItem = ({ project }) => {
@@ -32,14 +52,23 @@ const ProjectListItem = ({ project }) => {
 			<Grid container spacing={2} alignItems="center">
 				{/* Left Side: Title, Status, Description */}
 				<Grid item xs={12} md={6}>
-					<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-						<Typography variant="h5" component="div" sx={{ mr: 2 }}>
+					<Box
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							mb: 1,
+							flexWrap: "wrap",
+							gap: 2,
+						}}
+					>
+						<Typography variant="h5" component="div">
 							{project.title}
 						</Typography>
+						{/* THIS IS THE CHANGE: We now use the `sx` prop to apply our custom styles */}
 						<Chip
 							label={project.status}
-							color={getStatusChipColor(project.status)}
 							size="small"
+							sx={getStatusChipStyles(project.status)}
 						/>
 					</Box>
 					<Typography variant="body2" color="text.secondary">
@@ -59,13 +88,14 @@ const ProjectListItem = ({ project }) => {
 						</Grid>
 						<Grid item xs={6} sm={4}>
 							<AvatarGroup max={4} sx={{ justifyContent: "center" }}>
-								{project.members.map((member) => (
-									<Avatar
-										key={member.id}
-										alt={member.name}
-										src={member.avatarUrl}
-									/>
-								))}
+								{project.members &&
+									project.members.map((member) => (
+										<Avatar
+											key={member.id}
+											alt={member.name}
+											src={member.avatarUrl}
+										/>
+									))}
 							</AvatarGroup>
 						</Grid>
 						<Grid item xs={12} sm={5}>
@@ -75,11 +105,9 @@ const ProjectListItem = ({ project }) => {
 									value={project.completion}
 									sx={{ height: 8, borderRadius: 5 }}
 								/>
-								<Typography
-									variant="caption"
-									display="block"
-									align="right"
-								>{`${project.completion}% Complete`}</Typography>
+								<Typography variant="caption" display="block" align="right">
+									{`${project.completion}% Complete`}
+								</Typography>
 							</Box>
 						</Grid>
 					</Grid>
@@ -93,7 +121,7 @@ const ProjectListItem = ({ project }) => {
 				>
 					<Button
 						component={Link}
-						to={`/manager/projects/${project.id}`}
+						to={`/client/projects/${project.id}`}
 						variant="contained"
 						endIcon={<OpenInNewIcon />}
 					>

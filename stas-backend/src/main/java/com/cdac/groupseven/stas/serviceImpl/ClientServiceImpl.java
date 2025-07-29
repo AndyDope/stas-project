@@ -1,20 +1,22 @@
 package com.cdac.groupseven.stas.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cdac.groupseven.stas.dto.ClientDashboardStats;
+import com.cdac.groupseven.stas.dto.ProjectDto;
 import com.cdac.groupseven.stas.entity.Project;
 import com.cdac.groupseven.stas.enums.ProjectStatus;
 import com.cdac.groupseven.stas.repository.ProjectRepository;
 import com.cdac.groupseven.stas.repository.UserRepository;
-import com.cdac.groupseven.stas.service.DashboardService;
+import com.cdac.groupseven.stas.service.ClientService;
 
 @Service
-public class DashboardServiceImpl implements DashboardService {
+public class ClientServiceImpl implements ClientService {
 
 	@Autowired
 	ProjectRepository projectRepository;
@@ -23,23 +25,22 @@ public class DashboardServiceImpl implements DashboardService {
 	UserRepository userRepository;
 		
 	@Override
-	public Object getClientStats(Long id) {
+	public Object getClientDashboardData(Long id) {
 		List<Project> projects = projectRepository.findByClient_Id(id).get();
 		
-		HashMap<String, Object> clientDashboardStats = new HashMap<>();
-		
+		HashMap<String, Object> clientDashboardStats = new HashMap<>();		
 		clientDashboardStats.put("pending", projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.PENDING)).count());
 		clientDashboardStats.put("active", projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.ONGOING)).count());
 		clientDashboardStats.put("completed", projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.COMPLETED)).count());
 		clientDashboardStats.put("overdue", projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.DELAYED)).count());
 		
-//		ClientDashboardStats clientDashboardStats = new ClientDashboardStats();
+		Map<String, Object> response = new HashMap<>();
+		response.put("stats", clientDashboardStats);
 		
-//		clientDashboardStats.setTotal(projects.size());
-//		clientDashboardStats.setActive(projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.ONGOING)).count());
-//		clientDashboardStats.setCompleted(projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.COMPLETED)).count());
-//		clientDashboardStats.setOverdue(projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.DELAYED)).count());
+		List<ProjectDto> projectsDto = new ArrayList<>();
+		projects.forEach(project -> projectsDto.add(new ProjectDto(project)));
 		
-		return clientDashboardStats;
+		response.put("recentProjects", projectsDto);		
+		return response;
 	}
 }
