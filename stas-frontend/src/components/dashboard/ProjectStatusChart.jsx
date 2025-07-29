@@ -7,18 +7,18 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ProjectStatusChart = ({ data }) => {
 	const chartData = {
-		labels: ["Total Projects", "Active", "Completed", "Overdue"],
+		labels: ["Pending", "Active", "Completed", "Overdue"],
 		datasets: [
 			{
 				label: "# of Projects",
-				data: [data.total, data.active, data.completed, data.overdue],
+				data: [data.pending, data.active, data.completed, data.overdue],
 				backgroundColor: [
-					"rgba(59, 130, 246, 0.7)", // Blue
 					"rgba(245, 158, 11, 0.7)", // Amber
+					"rgba(59, 130, 246, 0.7)", // Blue
 					"rgba(16, 185, 129, 0.7)", // Green
 					"rgba(239, 68, 68, 0.7)", // Red
 				],
-				borderColor: ["#3B82F6", "#F59E0B", "#10B981", "#EF4444"],
+				borderColor: ["#F59E0B", "#3B82F6", "#10B981", "#EF4444"],
 				borderWidth: 1,
 			},
 		],

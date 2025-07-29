@@ -18,7 +18,7 @@ public class DashboardController {
 	DashboardService dashboardService;
 	
 	@GetMapping("/client-stats/{id}")
-	public ResponseEntity<ClientDashboardStats> getClientStats(@PathVariable Long id) {
+	public ResponseEntity<Object> getClientStats(@PathVariable Long id) {
 		return ResponseEntity.ok(dashboardService.getClientStats(id));
 	}
 }

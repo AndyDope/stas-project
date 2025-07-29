@@ -21,10 +21,10 @@ import dashboadService from "../services/dashboadService";
 
 const ClientDashboardPage = () => {
 	const [stats, setStats] = useState({
-		total: 5,
-		active: 2,
-		completed: 2,
-		overdue: 1,
+		pending: 0,
+		active: 0,
+		completed: 0,
+		overdue: 0,
 	});
 	const [recentProjects, setRecentProjects] = useState([]);
 	const [loading, setLoading] = useState(true); // Start in a loading state
@@ -91,15 +91,15 @@ const ClientDashboardPage = () => {
 				<Grid item xs={12} sm={6} md={3}>
 					<StatCard
 						title="Total Projects"
-						value={stats.total}
-						icon={<FolderIcon color="primary" />}
+						value={stats.pending}
+						icon={<FolderIcon color="warning" />}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={6} md={3}>
 					<StatCard
 						title="Active Projects"
 						value={stats.active}
-						icon={<SyncIcon color="warning" />}
+						icon={<SyncIcon color="primary" />}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={6} md={3}>
