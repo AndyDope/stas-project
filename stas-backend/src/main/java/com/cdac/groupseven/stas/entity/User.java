@@ -43,4 +43,7 @@ public class User {
 
     @OneToMany(mappedBy = "givenBy")
     private List<Feedback> feedbacksReceived;
+    
+    @OneToMany(mappedBy = "manager")
+    private List<Project> projects;
 }

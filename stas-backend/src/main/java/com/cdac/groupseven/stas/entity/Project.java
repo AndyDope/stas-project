@@ -40,4 +40,8 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private List<Task> tasks;
+    
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private User manager;
 }
