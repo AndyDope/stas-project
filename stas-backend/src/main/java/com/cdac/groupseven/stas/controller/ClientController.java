@@ -1,13 +1,15 @@
 package com.cdac.groupseven.stas.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cdac.groupseven.stas.dto.NewProject;
 import com.cdac.groupseven.stas.dto.ProjectDto;
 import com.cdac.groupseven.stas.service.ClientService;
 import com.cdac.groupseven.stas.service.ProjectService;
@@ -39,5 +41,11 @@ public class ClientController {
 //        Page<ProjectDto> projectPage = projectService.findProjectsForClient(id, page, limit);		
 //        return ResponseEntity.ok(projectPage);
 		return ResponseEntity.ok(projectService.findProjectsForClient(id, page, limit));
+	}
+	
+	@PostMapping("/project")
+	public ResponseEntity<ProjectDto> createNewProject(@RequestBody NewProject newProject) {
+		System.out.println(newProject);
+		return ResponseEntity.ok(projectService.createNewProject(newProject));
 	}
 }

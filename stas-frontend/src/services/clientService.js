@@ -43,7 +43,13 @@ const getProjects = (page, limit) => {
     });
 };
 
+// Creating new project
+const createNewProject = (newProject) => {
+    return axios.post(`${API_URL}/project`, newProject, { headers: getAuthHeaders() });
+}
+
 export default {
     getClientDashboardStats,
     getProjects,
+    createNewProject,
 };

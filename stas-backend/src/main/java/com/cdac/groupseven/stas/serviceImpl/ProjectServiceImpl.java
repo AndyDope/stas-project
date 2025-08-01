@@ -1,5 +1,6 @@
 package com.cdac.groupseven.stas.serviceImpl;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cdac.groupseven.stas.dto.MemberDto;
+import com.cdac.groupseven.stas.dto.NewProject;
 import com.cdac.groupseven.stas.dto.ProjectDto;
 import com.cdac.groupseven.stas.entity.Project;
+import com.cdac.groupseven.stas.enums.ProjectStatus;
 import com.cdac.groupseven.stas.enums.TaskStatus;
 import com.cdac.groupseven.stas.repository.ProjectRepository;
+import com.cdac.groupseven.stas.repository.UserRepository;
 import com.cdac.groupseven.stas.service.ProjectService;
 
 @Service
@@ -20,6 +24,8 @@ public class ProjectServiceImpl implements ProjectService {
 	@Autowired
 	ProjectRepository projectRepository;
 	
+	@Autowired
+	UserRepository userRepository;
 	
 	public void createProject(Project project) {
 		projectRepository.save(project);
@@ -106,5 +112,24 @@ public class ProjectServiceImpl implements ProjectService {
                 .toList());
 
         return dto;
+    }
+    
+    public ProjectDto createNewProject(NewProject newProject) {
+    	LocalDate oneMonthFromNow = LocalDate.now().plusMonths(1);
+    	if (newProject.getCompletionDate().isBefore(LocalDate.now().plusMonths(1)))
+    		throw new RuntimeException("Project completion date should be more than " + oneMonthFromNow);
+    	
+    	Project eProject = new Project();
+    	eProject.setTitle(newProject.getTitle());
+    	eProject.setDescription(newProject.getDescription());
+    	eProject.setEndDate(newProject.getCompletionDate());
+    	eProject.setStartDate(LocalDate.now());
+    	eProject.setStatus(ProjectStatus.PENDING);
+    	System.out.println(newProject.getClientId());
+    	eProject.setClient(userRepository.findById(newProject.getClientId()).get());
+    	
+    	projectRepository.save(eProject);
+    	
+    	return new ProjectDto(eProject);
     }
 }

@@ -37,19 +37,20 @@ public class ProjectDto {
 		status = project.getStatus().name();
 		client = project.getClient().getId();
 		
-		members = new ArrayList<>();
-		project.getMembers().forEach(member -> members.add(new MemberDto(member.getUser().getId(), member.getUser().getName())));
-		
-		tasks = new HashMap<>();
-		project.getTasks().forEach(task -> tasks.put(task.getId(), task.getStatus().name()));
-		
-		int totalTasks = project.getTasks().size();
-		long completedTasks = project.getTasks().stream()
-                .filter(task -> TaskStatus.COMPLETED.equals(task.getStatus()))
-                .count();
-        
-		openTasks = totalTasks - (int) completedTasks;
-		completion = totalTasks > 0 ? (int) Math.round(((double) completedTasks / totalTasks) * 100) : 0;
-		
+		if (project.getMembers() != null) {
+			members = new ArrayList<>();		
+			project.getMembers().forEach(member -> members.add(new MemberDto(member.getUser().getId(), member.getUser().getName())));
+		}
+		if (project.getTasks() != null) {
+			tasks = new HashMap<>();
+			project.getTasks().forEach(task -> tasks.put(task.getId(), task.getStatus().name()));
+			int totalTasks = project.getTasks().size();
+			long completedTasks = project.getTasks().stream()
+					.filter(task -> TaskStatus.COMPLETED.equals(task.getStatus()))
+					.count();
+			
+			openTasks = totalTasks - (int) completedTasks;
+			completion = totalTasks > 0 ? (int) Math.round(((double) completedTasks / totalTasks) * 100) : 0;
+		}				
 	}
 }

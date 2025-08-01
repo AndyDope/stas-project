@@ -9,51 +9,52 @@ import {
 	ListItemText,
 	Divider,
 	CircularProgress,
+	Alert,
+	Chip,
 } from "@mui/material";
 import StatCard from "../components/dashboard/StatCard";
 import ProjectStatusChart from "../components/dashboard/ProjectStatusChart";
-import FolderIcon from "@mui/icons-material/Folder";
+import clientService from "../services/clientService";
+
+import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import SyncIcon from "@mui/icons-material/Sync";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
-import clientService from "../services/clientService";
+
+const getStatusChipColor = (status) => {
+	switch (status) {
+		case "COMPLETED":
+			return "success";
+		case "ONGOING":
+			return "primary";
+		case "PENDING":
+			return "warning";
+		default:
+			return "default";
+	}
+};
 
 const ClientDashboardPage = () => {
-	const [stats, setStats] = useState({
-		pending: 0,
-		active: 0,
-		completed: 0,
-		overdue: 0,
-	});
+	const [stats, setStats] = useState(null);
 	const [recentProjects, setRecentProjects] = useState([]);
-	const [loading, setLoading] = useState(true); // Start in a loading state
+	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	// 2. Use useEffect to fetch data when the component mounts
 	useEffect(() => {
 		const fetchDashboardData = async () => {
 			try {
-				// The await keyword "waits" for the promise to resolve
 				const response = await clientService.getClientDashboardStats();
-
-				console.log(response.data);
-
-				// The actual data is in response.data
 				setStats(response.data.stats);
 				setRecentProjects(response.data.recentProjects);
 			} catch (err) {
 				setError("Failed to load dashboard data. Please try again later.");
-				console.error("Error fetching dashboard data:", err);
 			} finally {
-				// This runs whether the request succeeded or failed
 				setLoading(false);
 			}
 		};
-
 		fetchDashboardData();
-	}, []); // The empty array [] means this effect runs only once, like componentDidMount
+	}, []);
 
-	// 3. Conditional rendering based on the state
 	if (loading) {
 		return (
 			<Box
@@ -73,32 +74,28 @@ const ClientDashboardPage = () => {
 		return <Alert severity="error">{error}</Alert>;
 	}
 
-	// const stats = { total: 12, active: 5, completed: 6, overdue: 1 };
-	// const data = dsahboardService.clientStats();
-	// const stats = { data };
-	// console.log(data);
-	// console.log(stats);
-
-	// const recentProjects = [
-	// 	/* ... mock data ... */
-	// ];
+	if (!stats) {
+		return <Alert severity="info">No dashboard data available.</Alert>;
+	}
 
 	return (
 		<Box>
 			<Typography variant="h4" sx={{ mb: 3 }}>
 				Client Dashboard
 			</Typography>
+
+			{/* *** FIX: Separate Grid container for the top row of stat cards *** */}
 			<Grid container spacing={3}>
 				<Grid item xs={12} sm={6} md={3}>
 					<StatCard
-						title="Pending Projects"
+						title="Pending"
 						value={stats.pending}
-						icon={<FolderIcon color="warning" />}
+						icon={<PendingActionsIcon color="warning" />}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={6} md={3}>
 					<StatCard
-						title="Active Projects"
+						title="Active"
 						value={stats.active}
 						icon={<SyncIcon color="primary" />}
 					/>
@@ -117,16 +114,64 @@ const ClientDashboardPage = () => {
 						icon={<ErrorIcon color="error" />}
 					/>
 				</Grid>
+			</Grid>
+
+			{/* *** FIX: A second, independent Grid container for the bottom row *** */}
+			<Grid container spacing={3} sx={{ mt: 1 }}>
 				<Grid item xs={12} md={7}>
 					<Paper sx={{ p: 2, height: 380 }}>
-						<Typography variant="h6">Projects Overview</Typography>
-						<ProjectStatusChart data={stats} />
+						<Typography variant="h6" gutterBottom>
+							Projects Overview
+						</Typography>
+						<Box sx={{ height: "calc(100% - 30px)" }}>
+							<ProjectStatusChart data={stats} />
+						</Box>
 					</Paper>
 				</Grid>
+
 				<Grid item xs={12} md={5}>
-					<Paper sx={{ p: 2, height: 380 }}>
-						<Typography variant="h6">Recent Projects</Typography>
-						{/* List component here */}
+					<Paper
+						sx={{ p: 2, height: 380, display: "flex", flexDirection: "column" }}
+					>
+						<Typography variant="h6" gutterBottom>
+							Recent Projects
+						</Typography>
+						<List sx={{ overflow: "auto" }}>
+							{recentProjects.map((project, index) => (
+								<React.Fragment key={project.id}>
+									<ListItem
+										secondaryAction={
+											<Chip
+												label={project.status}
+												color={getStatusChipColor(project.status)}
+												size="small"
+											/>
+										}
+									>
+										<ListItemText
+											primary={project.title}
+											sx={{
+												// *** THIS IS THE FIX ***
+												// We add a right margin to the text container itself.
+												// This creates space for the secondaryAction (the Chip) to render
+												// without overlapping the text.
+												marginRight: "120px", // Adjust this value if your badges are wider
+
+												// These styles now work correctly because the container has a defined boundary.
+												"& .MuiListItemText-primary": {
+													whiteSpace: "nowrap",
+													overflow: "hidden",
+													textOverflow: "ellipsis",
+												},
+											}}
+										/>
+									</ListItem>
+									{index < recentProjects.length - 1 && (
+										<Divider component="li" />
+									)}
+								</React.Fragment>
+							))}
+						</List>
 					</Paper>
 				</Grid>
 			</Grid>
