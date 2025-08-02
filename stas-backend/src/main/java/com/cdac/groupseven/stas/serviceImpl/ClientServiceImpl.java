@@ -26,7 +26,7 @@ public class ClientServiceImpl implements ClientService {
 		
 	@Override
 	public Object getClientDashboardData(Long id) {
-		List<Project> projects = projectRepository.findByClient_Id(id).get();
+		List<Project> projects = projectRepository.findByClientId(id);
 		
 		HashMap<String, Object> clientDashboardStats = new HashMap<>();		
 		clientDashboardStats.put("pending", projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.PENDING)).count());

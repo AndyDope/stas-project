@@ -16,6 +16,7 @@ import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import RateReviewIcon from "@mui/icons-material/RateReview";
 import PeopleIcon from "@mui/icons-material/People";
 
 const navConfig = {
@@ -48,6 +49,11 @@ const navConfig = {
 			text: "Create Project",
 			icon: <AddCircleOutlineIcon />,
 			path: "/client/create-project",
+		},
+		{
+			text: "Give Feedback",
+			icon: <RateReviewIcon />,
+			path: "/client/feedback",
 		},
 		{ text: "My Profile", icon: <SettingsIcon />, path: "/profile" },
 	],

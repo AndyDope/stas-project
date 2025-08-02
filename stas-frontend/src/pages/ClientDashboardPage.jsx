@@ -21,17 +21,35 @@ import SyncIcon from "@mui/icons-material/Sync";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 
-const getStatusChipColor = (status) => {
+// *** THIS IS THE STYLING LOGIC COPIED FROM ProjectListItem.jsx ***
+// It provides the custom background colors for the status badges.
+const getStatusChipStyles = (status) => {
+	const style = {
+		color: "#fff", // White text for good contrast
+		fontWeight: "bold",
+	};
 	switch (status) {
 		case "COMPLETED":
-			return "success";
+			style.backgroundColor = "#10B981"; // Green
+			break;
 		case "ONGOING":
-			return "primary";
+			style.backgroundColor = "#3B82F6"; // Blue
+			break;
 		case "PENDING":
-			return "warning";
+			style.backgroundColor = "#F59E0B"; // Amber
+			break;
+		case "DELAYED":
+		case "AT RISK":
+			style.backgroundColor = "#EF4444"; // Red
+			break;
+		case "ONHOLD":
+			style.backgroundColor = "#6B7286"; // Medium Gray
+			break;
 		default:
-			return "default";
+			style.backgroundColor = "#9E9E9E"; // A neutral gray
+			break;
 	}
+	return style;
 };
 
 const ClientDashboardPage = () => {
@@ -84,30 +102,29 @@ const ClientDashboardPage = () => {
 				Client Dashboard
 			</Typography>
 
-			{/* *** FIX: Separate Grid container for the top row of stat cards *** */}
 			<Grid container spacing={3}>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Pending"
 						value={stats.pending}
 						icon={<PendingActionsIcon color="warning" />}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Active"
 						value={stats.active}
 						icon={<SyncIcon color="primary" />}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Completed"
 						value={stats.completed}
 						icon={<CheckCircleIcon color="success" />}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Overdue"
 						value={stats.overdue}
@@ -116,9 +133,8 @@ const ClientDashboardPage = () => {
 				</Grid>
 			</Grid>
 
-			{/* *** FIX: A second, independent Grid container for the bottom row *** */}
-			<Grid container spacing={3} sx={{ mt: 1 }}>
-				<Grid item xs={12} md={7}>
+			<Grid container spacing={3} sx={{ mt: 3 }}>
+				<Grid size={{ xs: 12, md: 5 }}>
 					<Paper sx={{ p: 2, height: 380 }}>
 						<Typography variant="h6" gutterBottom>
 							Projects Overview
@@ -129,7 +145,7 @@ const ClientDashboardPage = () => {
 					</Paper>
 				</Grid>
 
-				<Grid item xs={12} md={5}>
+				<Grid size={{ xs: 12, md: 7 }}>
 					<Paper
 						sx={{ p: 2, height: 380, display: "flex", flexDirection: "column" }}
 					>
@@ -141,23 +157,20 @@ const ClientDashboardPage = () => {
 								<React.Fragment key={project.id}>
 									<ListItem
 										secondaryAction={
+											// *** THIS IS THE CHANGE ***
+											// We replace the `color` prop with the `sx` prop
+											// and use our new styling function.
 											<Chip
 												label={project.status}
-												color={getStatusChipColor(project.status)}
 												size="small"
+												sx={getStatusChipStyles(project.status)}
 											/>
 										}
 									>
 										<ListItemText
 											primary={project.title}
 											sx={{
-												// *** THIS IS THE FIX ***
-												// We add a right margin to the text container itself.
-												// This creates space for the secondaryAction (the Chip) to render
-												// without overlapping the text.
-												marginRight: "120px", // Adjust this value if your badges are wider
-
-												// These styles now work correctly because the container has a defined boundary.
+												marginRight: "120px",
 												"& .MuiListItemText-primary": {
 													whiteSpace: "nowrap",
 													overflow: "hidden",

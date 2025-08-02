@@ -48,8 +48,13 @@ const createNewProject = (newProject) => {
     return axios.post(`${API_URL}/project`, newProject, { headers: getAuthHeaders() });
 }
 
+const getProjectById = (projectId) => {
+    return axios.get(`${API_URL}/projects/${projectId}`, { headers: getAuthHeaders() });
+}
+
 export default {
     getClientDashboardStats,
     getProjects,
     createNewProject,
+    getProjectById,
 };

@@ -2,6 +2,7 @@ package com.cdac.groupseven.stas.serviceImpl;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,12 +30,7 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	public void createProject(Project project) {
 		projectRepository.save(project);
-	}	
-	
-	public Optional<Project> getProjectById(Long id) {
-		return projectRepository.findById(id);
-	}
-	
+	}		
 	
 	public void updateProject(long id,Project project) {
 		Optional<Project> existingProject = projectRepository.findById(id);
@@ -71,6 +67,15 @@ public class ProjectServiceImpl implements ProjectService {
 		
 	}
 
+	@Override
+	public ProjectDto getProjectById(Long id) {
+		Optional<Project> project = projectRepository.findById(id);
+		if (project.isPresent()) {
+			return new ProjectDto(project.get());
+		}
+		throw new RuntimeException("Project with ID:" + id + " is not present.");
+	}
+	
 	@Override
     public Page<ProjectDto> findProjectsForClient(Long clientId, int page, int limit) {
         // 1. Create a Pageable object from the page and limit parameters.
@@ -109,11 +114,12 @@ public class ProjectServiceImpl implements ProjectService {
         // For simplicity, we'll just show the count here.
         dto.setMembers(project.getMembers().stream()
                 .map(member -> new MemberDto(member.getUser().getId(), member.getUser().getName()))
-                .toList());
+                .collect(Collectors.toSet()));
 
         return dto;
     }
     
+    @Override
     public ProjectDto createNewProject(NewProject newProject) {
     	LocalDate oneMonthFromNow = LocalDate.now().plusMonths(1);
     	if (newProject.getCompletionDate().isBefore(LocalDate.now().plusMonths(1)))

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 import {
 	Box,
 	Typography,
@@ -12,6 +13,7 @@ import clientService from "../services/clientService";
 const ITEMS_PER_PAGE = 3;
 
 const MyProjectsPage = () => {
+	const { user } = useAuth();
 	const [projects, setProjects] = useState([]);
 	const [page, setPage] = useState(1); // MUI Pagination is 1-based
 	const [totalPages, setTotalPages] = useState(0);
@@ -71,7 +73,11 @@ const MyProjectsPage = () => {
 					<Box>
 						{projects.length > 0 ? (
 							projects.map((project) => (
-								<ProjectListItem key={project.id} project={project} />
+								<ProjectListItem
+									key={project.id}
+									project={project}
+									role={user.role.roleName}
+								/>
 							))
 						) : (
 							<Typography sx={{ mt: 4, textAlign: "center" }}>

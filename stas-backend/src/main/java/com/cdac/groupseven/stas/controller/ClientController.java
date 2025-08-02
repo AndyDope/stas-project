@@ -3,6 +3,7 @@ package com.cdac.groupseven.stas.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class ClientController {
 	}
 	
 	@GetMapping("/projects")
-	public ResponseEntity<Object> getClientProjects(
+	public ResponseEntity<Object> getProjects(
             // @RequestParam tells Spring to look for "?page=..." in the URL			
 			@RequestParam(value = "id") Long id, 
             @RequestParam(value = "page", defaultValue = "0") int page, 
@@ -38,14 +39,16 @@ public class ClientController {
 		
         // Now you can use the 'page' and 'limit' variables to fetch data
         // Your service layer would handle the database query
-//        Page<ProjectDto> projectPage = projectService.findProjectsForClient(id, page, limit);		
-//        return ResponseEntity.ok(projectPage);
 		return ResponseEntity.ok(projectService.findProjectsForClient(id, page, limit));
+	}
+	
+	@GetMapping("/projects/{id}")
+	public ResponseEntity<ProjectDto> getprojectById(@PathVariable Long id) {		
+		return ResponseEntity.ok(projectService.getProjectById(id));
 	}
 	
 	@PostMapping("/project")
 	public ResponseEntity<ProjectDto> createNewProject(@RequestBody NewProject newProject) {
-		System.out.println(newProject);
 		return ResponseEntity.ok(projectService.createNewProject(newProject));
 	}
 }

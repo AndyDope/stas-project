@@ -13,40 +13,37 @@ import {
 } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-// *** THIS IS THE UPDATED FUNCTION ***
-// It now returns a style object with specific background colors to match your chart.
 const getStatusChipStyles = (status) => {
-	// Default style for unknown statuses
-	const style = {
-		color: "#fff", // White text for good contrast
-		fontWeight: "bold",
-	};
-
+	const style = { color: "#fff", fontWeight: "bold" };
 	switch (status) {
 		case "COMPLETED":
-			style.backgroundColor = "#10B981"; // Green
+			style.backgroundColor = "#10B981";
 			break;
-		case "ONGOING": // This is the backend equivalent of 'Active'
-			style.backgroundColor = "#3B82F6"; // Blue
+		case "ONGOING":
+			style.backgroundColor = "#3B82F6";
 			break;
 		case "PENDING":
-			style.backgroundColor = "#F59E0B"; // Amber
+			style.backgroundColor = "#F59E0B";
 			break;
-		case "DELAYED": // Assuming 'DELAYED' or 'AT RISK' corresponds to 'Overdue'
+		case "DELAYED":
 		case "AT RISK":
-			style.backgroundColor = "#EF4444"; // Red
+			style.backgroundColor = "#EF4444";
 			break;
 		case "ONHOLD":
-			style.backgroundColor = "#6B7286"; // Medium Gray
+			style.backgroundColor = "#6B7286";
 			break;
 		default:
-			style.backgroundColor = "#9E9E9E"; // A neutral gray
+			style.backgroundColor = "#9E9E9E";
 			break;
 	}
 	return style;
 };
 
-const ProjectListItem = ({ project }) => {
+// *** CHANGE 1: Accept a 'role' prop ***
+const ProjectListItem = ({ project, role }) => {
+	// *** CHANGE 2: Determine the correct link based on the role ***
+	const projectLink = `/${role.toLowerCase()}/projects/${project.id}`;
+
 	return (
 		<Paper elevation={3} sx={{ p: 3, mb: 3 }}>
 			<Grid container spacing={2} alignItems="center">
@@ -64,7 +61,6 @@ const ProjectListItem = ({ project }) => {
 						<Typography variant="h5" component="div">
 							{project.title}
 						</Typography>
-						{/* THIS IS THE CHANGE: We now use the `sx` prop to apply our custom styles */}
 						<Chip
 							label={project.status}
 							size="small"
@@ -105,9 +101,11 @@ const ProjectListItem = ({ project }) => {
 									value={project.completion}
 									sx={{ height: 8, borderRadius: 5 }}
 								/>
-								<Typography variant="caption" display="block" align="right">
-									{`${project.completion}% Complete`}
-								</Typography>
+								<Typography
+									variant="caption"
+									display="block"
+									align="right"
+								>{`${project.completion}% Complete`}</Typography>
 							</Box>
 						</Grid>
 					</Grid>
@@ -121,7 +119,8 @@ const ProjectListItem = ({ project }) => {
 				>
 					<Button
 						component={Link}
-						to={`/client/projects/${project.id}`}
+						// *** CHANGE 3: Use the dynamic link ***
+						to={projectLink}
 						variant="contained"
 						endIcon={<OpenInNewIcon />}
 					>

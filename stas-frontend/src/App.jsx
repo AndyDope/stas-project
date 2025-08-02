@@ -9,6 +9,8 @@ import RoleBasedRoute from "./components/auth/RoleBasedRoute";
 import DashboardRedirect from "./components/auth/DashboardRedirect";
 
 // Pages
+import GiveFeedbackPage from "./pages/GiveFeedbackPage";
+import ClientProjectDetailPage from "./pages/ClientProjectDetailPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
@@ -60,9 +62,15 @@ function App() {
 								/>
 								<Route path="client/projects" element={<MyProjectsPage />} />
 								<Route
+									path="client/projects/:projectId"
+									element={<ClientProjectDetailPage />}
+								/>
+								+{" "}
+								<Route
 									path="client/create-project"
 									element={<CreateProjectPage />}
 								/>
+								<Route path="client/feedback" element={<GiveFeedbackPage />} />
 							</Route>
 							<Route element={<RoleBasedRoute allowedRoles={["DEVELOPER"]} />}>
 								<Route

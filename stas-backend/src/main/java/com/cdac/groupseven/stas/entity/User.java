@@ -38,9 +38,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<UserSkill> userSkills;
 
-    @OneToMany(mappedBy = "developer")
-    private List<Feedback> feedbacksGiven;
-
-    @OneToMany(mappedBy = "givenBy")
+    @OneToMany(mappedBy = "recipient")
     private List<Feedback> feedbacksReceived;
+
+    @OneToMany(mappedBy = "author")
+    private List<Feedback> feedbacksGiven;
 }
