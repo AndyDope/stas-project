@@ -89,13 +89,13 @@ const GiveFeedbackPage = () => {
 
 	return (
 		<Box>
-			<Typography variant="h4" sx={{ mb: 3 }}>
+			<Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
 				Give Project Feedback
 			</Typography>
 			<Grid container spacing={4}>
-				<Grid>
+				<Grid size={{ xs: 12, sm: 12, md: 12, lg: 6 }}>
 					<Paper sx={{ p: 4 }}>
-						<Typography variant="h6" gutterBottom>
+						<Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
 							Submit Feedback for a Project
 						</Typography>
 						<Box component="form" onSubmit={handleSubmit}>
@@ -151,9 +151,13 @@ const GiveFeedbackPage = () => {
 						</Box>
 					</Paper>
 				</Grid>
-				<Grid>
+				<Grid size={{ xs: 12, sm: 12, md: 12, lg: 6 }}>
 					<Paper sx={{ p: 2, height: "100%" }}>
-						<Typography variant="h6" gutterBottom sx={{ p: 2 }}>
+						<Typography
+							variant="h5"
+							gutterBottom
+							sx={{ p: 2, fontWeight: 600 }}
+						>
 							My Feedback History
 						</Typography>
 						<List sx={{ maxHeight: 500, overflow: "auto" }}>
