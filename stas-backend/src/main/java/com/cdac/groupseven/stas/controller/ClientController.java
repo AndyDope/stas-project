@@ -2,6 +2,9 @@ package com.cdac.groupseven.stas.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,36 +21,46 @@ import com.cdac.groupseven.stas.service.ProjectService;
 @RestController
 @RequestMapping("/api/client")
 public class ClientController {
-	
+
 	@Autowired
 	ClientService clientService;
-	
+
 	@Autowired
-	ProjectService projectService; 
-	
+	ProjectService projectService;
+
 	@GetMapping("/dashboard-data")
-	public ResponseEntity<Object> getClientDashboardData(@RequestParam(value = "id") Long id) {
-		return ResponseEntity.ok(clientService.getClientDashboardData(id));
+	@PreAuthorize("hasRole('CLIENT')")
+	public ResponseEntity<Object> getClientDashboardData() {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userEmail = userDetails.getUsername();
+
+		return ResponseEntity.ok(clientService.getClientDashboardData(userEmail));
 	}
-	
+
 	@GetMapping("/projects")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT') or hasRole('MANAGER')")
 	public ResponseEntity<Object> getProjects(
-            // @RequestParam tells Spring to look for "?page=..." in the URL			
-			@RequestParam(value = "id") Long id, 
-            @RequestParam(value = "page", defaultValue = "0") int page, 
-            @RequestParam(value = "limit", defaultValue = "5") int limit) {
-		
-        // Now you can use the 'page' and 'limit' variables to fetch data
-        // Your service layer would handle the database query
-		return ResponseEntity.ok(projectService.findProjectsForClient(id, page, limit));
+			// @RequestParam tells Spring to look for "?page=..." in the URL
+			@RequestParam(value = "page", defaultValue = "0") int page,
+			@RequestParam(value = "limit", defaultValue = "5") int limit) {
+
+		// Now you can use the 'page' and 'limit' variables to fetch data
+		// Your service layer would handle the database query
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userEmail = userDetails.getUsername();
+
+		return ResponseEntity.ok(projectService.findProjectsForClient(userEmail, page, limit));
 	}
-	
+
 	@GetMapping("/projects/{id}")
-	public ResponseEntity<ProjectDto> getprojectById(@PathVariable Long id) {		
+	@PreAuthorize("hasRole('CLIENT') or hasRole('MANAGER')")
+	public ResponseEntity<ProjectDto> getprojectById(@PathVariable Long id) {
+
 		return ResponseEntity.ok(projectService.getProjectById(id));
 	}
-	
+
 	@PostMapping("/project")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
 	public ResponseEntity<ProjectDto> createNewProject(@RequestBody NewProject newProject) {
 		return ResponseEntity.ok(projectService.createNewProject(newProject));
 	}

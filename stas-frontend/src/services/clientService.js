@@ -12,18 +12,9 @@ const getAuthHeaders = () => {
     return {};
 };
 
-// Helper function to get Client ID
-const getId = () => {
-    const storedData = JSON.parse(localStorage.getItem('user'));
-    if (storedData && storedData.user && storedData.user.id) {
-        return storedData.user.id;
-    }
-    return 0;
-};
-
 // Get client stats for dashboard
 const getClientDashboardStats = () => {
-    return axios.get(`${API_URL}/dashboard-data`, { headers: getAuthHeaders(), params: { id: getId() } });
+    return axios.get(`${API_URL}/dashboard-data`, { headers: getAuthHeaders() });
 };
 
 /**
@@ -36,7 +27,6 @@ const getProjects = (page, limit) => {
     return axios.get(`${API_URL}/projects`, {
         headers: getAuthHeaders(),
         params: {
-            id: getId(),
             page: page,
             limit: limit
         }

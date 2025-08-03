@@ -16,6 +16,6 @@ import com.cdac.groupseven.stas.enums.ProjectStatus;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<User> findByTitle(String title);    
     Optional<List<Project>> findByStatus(ProjectStatus status);
-    List<Project> findByClientId(Long id);
-    Page<Project> findByClientId(Long clientId, Pageable pageable);    
+    List<Project> findByClientEmail(String email);
+    Page<Project> findByClientEmail(String email, Pageable pageable);    
 }

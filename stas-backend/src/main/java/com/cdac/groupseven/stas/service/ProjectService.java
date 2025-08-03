@@ -14,7 +14,7 @@ public interface ProjectService {
 	
 	void updateProject(long id,Project project) ;
 
-	Page<ProjectDto> findProjectsForClient(Long id, int page, int limit);
+	Page<ProjectDto> findProjectsForClient(String email, int page, int limit);
 
 	ProjectDto createNewProject(NewProject newProject);
 }

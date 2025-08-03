@@ -1,12 +1,13 @@
 package com.cdac.groupseven.stas.service;
 
 import com.cdac.groupseven.stas.dto.UserLoginRequestDto;
-import com.cdac.groupseven.stas.dto.UserResponseDto;
+import com.cdac.groupseven.stas.dto.AuthResponse;
+import com.cdac.groupseven.stas.dto.UserDto;
 import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
 import com.cdac.groupseven.stas.dto.UserUpdateDto;
 
 public interface UserService {
-    UserResponseDto signup(UserSignupRequestDto signupDto);
-    UserResponseDto login(UserLoginRequestDto loginDto);
-    UserResponseDto updateDetails(UserUpdateDto updatedDto);
+    UserDto signup(UserSignupRequestDto signupDto);
+    AuthResponse login(UserLoginRequestDto loginDto);
+    UserDto updateDetails(UserUpdateDto updatedDto);
 }

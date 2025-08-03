@@ -77,13 +77,13 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
-    public Page<ProjectDto> findProjectsForClient(Long clientId, int page, int limit) {
+    public Page<ProjectDto> findProjectsForClient(String email, int page, int limit) {
         // 1. Create a Pageable object from the page and limit parameters.
         // This object tells the repository which page to fetch and how many items.
         Pageable pageable = PageRequest.of(page, limit);
 
         // 2. Call the repository method. It returns a Page of Project ENTITIES.
-        Page<Project> projectPage = projectRepository.findByClientId(clientId, pageable);
+        Page<Project> projectPage = projectRepository.findByClientEmail(email, pageable);
 
         // 3. Convert the Page<Project> to a Page<ProjectDto>.
         // The .map() function on the Page object is the perfect tool for this.
