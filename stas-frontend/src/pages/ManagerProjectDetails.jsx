@@ -59,6 +59,8 @@ const getProjectStatusColor = (status) => {
 const ManagerProjectDetails = () => {
   const storedUser = JSON.parse(localStorage?.getItem("user") || "{}");
   const managerId = storedUser?.user?.id;
+  const token = storedUser?.token;
+
   const { projectId } = useParams();
 
   const [project, setProject] = useState(null);
@@ -93,7 +95,13 @@ const ManagerProjectDetails = () => {
     const fetchProject = async () => {
       try {
         const res = await fetch(
-          `http://localhost:80/manager/${managerId}/project/${projectId}`
+          `http://localhost:80/manager/${managerId}/project/${projectId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         const data = await res.json();
         setProject(data);
@@ -110,7 +118,13 @@ const ManagerProjectDetails = () => {
   const fetchAvailableDevelopers = async () => {
     try {
       const res = await fetch(
-        `http://localhost:80/manager/${managerId}/available-developers`
+        `http://localhost:80/manager/${managerId}/available-developers`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       const data = await res.json();
       setAvailableDevelopers(data);
@@ -132,6 +146,7 @@ const ManagerProjectDetails = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ developerId }),
         }
@@ -178,7 +193,13 @@ const ManagerProjectDetails = () => {
   const fetchProject = async () => {
     try {
       const res = await fetch(
-        `http://localhost:80/manager/${managerId}/project/${projectId}`
+        `http://localhost:80/manager/${managerId}/project/${projectId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       const data = await res.json();
       setProject(data);
@@ -197,6 +218,7 @@ const ManagerProjectDetails = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(editData),
         }
@@ -225,6 +247,7 @@ const ManagerProjectDetails = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ developerId }),
         }

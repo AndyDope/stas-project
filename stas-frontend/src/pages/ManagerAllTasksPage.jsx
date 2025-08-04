@@ -50,8 +50,10 @@ const groupAndSortTasks = (tasks) => {
 };
 
 const ManagerAllTasksPage = () => {
-  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const storedUser = JSON.parse(localStorage?.getItem("user") || "{}");
   const managerId = storedUser?.user?.id;
+  const token = storedUser?.token;
+
   const navigate = useNavigate();
 
   const [tasks, setTasks] = useState([]);
@@ -59,7 +61,15 @@ const ManagerAllTasksPage = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await fetch(`http://localhost:80/manager/${managerId}/tasks`);
+      const res = await fetch(
+        `http://localhost:80/manager/${managerId}/tasks`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const data = await res.json();
       setTasks(data);
     } catch (error) {

@@ -16,6 +16,7 @@ const ManagerFeedbackPage = () => {
   const storedUser = JSON.parse(localStorage?.getItem("user") || "{}");
   const managerId = storedUser?.user?.id;
   const token = storedUser?.token;
+
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [developers, setDevelopers] = useState([]);
@@ -28,7 +29,12 @@ const ManagerFeedbackPage = () => {
 
   // Load all projects for manager
   useEffect(() => {
-    fetch(`http://localhost:80/manager/${managerId}/myProjects`)
+    fetch(`http://localhost:80/manager/${managerId}/myProjects`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((err) => console.error("Error loading projects", err));
@@ -38,7 +44,13 @@ const ManagerFeedbackPage = () => {
   useEffect(() => {
     if (!selectedProjectId) return;
     fetch(
-      `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/teamMembers`
+      `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/teamMembers`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
     )
       .then((res) => res.json())
       .then((data) => setDevelopers(data))
@@ -49,7 +61,13 @@ const ManagerFeedbackPage = () => {
   useEffect(() => {
     if (!selectedDeveloper || !selectedProjectId) return;
     fetch(
-      `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/teamMembers/${selectedDeveloper}/tasks`
+      `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/teamMembers/${selectedDeveloper}/tasks`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
       ///{managerId}/project/{projectId}/teamMembers/{developerId}/tasks
     )
       .then((res) => res.json())
@@ -59,7 +77,12 @@ const ManagerFeedbackPage = () => {
 
   // Load feedback history for manager
   useEffect(() => {
-    fetch(`http://localhost:80/manager/${managerId}/feedbacks`)
+    fetch(`http://localhost:80/manager/${managerId}/feedbacks`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => setFeedbackHistory(data))
       .catch((err) => console.error("Error loading feedback history", err));
@@ -85,7 +108,10 @@ const ManagerFeedbackPage = () => {
 
     await fetch(`http://localhost:80/manager/${managerId}/giveFeedback`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(payload),
     });
 
@@ -98,7 +124,13 @@ const ManagerFeedbackPage = () => {
 
     // Reload feedback history
     const updatedHistory = await fetch(
-      `http://localhost:80/manager/${managerId}/feedbacks`
+      `http://localhost:80/manager/${managerId}/feedbacks`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
     ).then((res) => res.json());
     setFeedbackHistory(updatedHistory);
   };

@@ -45,7 +45,13 @@ const ManagerAssignTaskPage = () => {
     const loadProjects = async () => {
       try {
         const res = await fetch(
-          `http://localhost:80/manager/${managerId}/myProjects`
+          `http://localhost:80/manager/${managerId}/myProjects`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (!res.ok) throw new Error("Failed to load projects");
         const data = await res.json();
@@ -71,7 +77,13 @@ const ManagerAssignTaskPage = () => {
       }
       try {
         const res = await fetch(
-          `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/teamMembers`
+          `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/teamMembers`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (!res.ok) throw new Error("Failed to load developers");
         const data = await res.json();
@@ -139,7 +151,10 @@ const ManagerAssignTaskPage = () => {
         `http://localhost:80/manager/${managerId}/createtask`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(taskPayload),
         }
       );

@@ -8,7 +8,12 @@ const ManagerReceivedFeedbackPage = () => {
   const [feedbacks, setFeedbacks] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:80/manager/${managerId}/receivedFeedbacks`)
+    fetch(`http://localhost:80/manager/${managerId}/receivedFeedbacks`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setFeedbacks(data);

@@ -15,8 +15,9 @@ import { useLocation } from "react-router-dom";
 const taskStatuses = ["ACTIVE", "COMPLETED", "OVERDUE", "PENDING"];
 
 const ManagerEditTaskPage = () => {
-  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const storedUser = JSON.parse(localStorage?.getItem("user") || "{}");
   const managerId = storedUser?.user?.id;
+  const token = storedUser?.token;
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -49,7 +50,12 @@ const ManagerEditTaskPage = () => {
 
   // Load all projects on page load
   useEffect(() => {
-    fetch(`http://localhost:80/manager/${managerId}/myProjects`)
+    fetch(`http://localhost:80/manager/${managerId}/myProjects`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((err) => console.error("Failed to load projects", err));
@@ -61,10 +67,22 @@ const ManagerEditTaskPage = () => {
       setLoading(true);
       Promise.all([
         fetch(
-          `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/teamMembers`
+          `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/teamMembers`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         ).then((res) => res.json()),
         fetch(
-          `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/tasks`
+          `http://localhost:80/manager/${managerId}/project/${selectedProjectId}/tasks`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         ).then((res) => res.json()),
       ])
         .then(([devs, tasks]) => {
@@ -127,7 +145,10 @@ const ManagerEditTaskPage = () => {
 
     fetch(`http://localhost:80/manager/${managerId}/task/${selectedTaskId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(payload),
     })
       .then((res) => {
