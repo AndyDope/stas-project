@@ -34,28 +34,28 @@ const AdminDashboardPage = () => {
 				<Grid item xs={12} sm={6} md={3}>
 					<StatCard
 						title="Total Users"
-						value="86"
+						value="86" //fetch from API
 						icon={<PeopleIcon color="primary" />}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={6} md={3}>
 					<StatCard
 						title="Total Projects"
-						value="12"
+						value="12" //fetch from API
 						icon={<AccountTreeIcon color="primary" />}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={6} md={3}>
 					<StatCard
 						title="Tasks Completed"
-						value="157"
+						value="157" //fetch from API
 						icon={<AssignmentTurnedInIcon color="success" />}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={6} md={3}>
 					<StatCard
 						title="Skills Defined"
-						value="35"
+						value="35" //fetch from API
 						icon={<BuildIcon color="primary" />}
 					/>
 				</Grid>
