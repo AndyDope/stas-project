@@ -13,33 +13,58 @@ import {
 } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-const getStatusChipColor = (status) => {
+const getStatusChipStyles = (status) => {
+	const style = { color: "#fff", fontWeight: "bold" };
 	switch (status) {
-		case "Completed":
-			return "success";
-		case "At Risk":
-			return "warning";
-		case "On Hold":
-			return "default";
+		case "COMPLETED":
+			style.backgroundColor = "#10B981";
+			break;
+		case "ONGOING":
+			style.backgroundColor = "#3B82F6";
+			break;
+		case "PENDING":
+			style.backgroundColor = "#F59E0B";
+			break;
+		case "DELAYED":
+		case "AT RISK":
+			style.backgroundColor = "#EF4444";
+			break;
+		case "ONHOLD":
+			style.backgroundColor = "#6B7286";
+			break;
 		default:
-			return "primary";
+			style.backgroundColor = "#9E9E9E";
+			break;
 	}
+	return style;
 };
 
-const ProjectListItem = ({ project }) => {
+// *** CHANGE 1: Accept a 'role' prop ***
+const ProjectListItem = ({ project, role }) => {
+	// *** CHANGE 2: Determine the correct link based on the role ***
+	const projectLink = `/${role.toLowerCase()}/projects/${project.id}`;
+
 	return (
 		<Paper elevation={3} sx={{ p: 3, mb: 3 }}>
 			<Grid container spacing={2} alignItems="center">
 				{/* Left Side: Title, Status, Description */}
 				<Grid item xs={12} md={6}>
-					<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-						<Typography variant="h5" component="div" sx={{ mr: 2 }}>
+					<Box
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							mb: 1,
+							flexWrap: "wrap",
+							gap: 2,
+						}}
+					>
+						<Typography variant="h5" component="div">
 							{project.title}
 						</Typography>
 						<Chip
 							label={project.status}
-							color={getStatusChipColor(project.status)}
 							size="small"
+							sx={getStatusChipStyles(project.status)}
 						/>
 					</Box>
 					<Typography variant="body2" color="text.secondary">
@@ -59,13 +84,14 @@ const ProjectListItem = ({ project }) => {
 						</Grid>
 						<Grid item xs={6} sm={4}>
 							<AvatarGroup max={4} sx={{ justifyContent: "center" }}>
-								{project.members.map((member) => (
-									<Avatar
-										key={member.id}
-										alt={member.name}
-										src={member.avatarUrl}
-									/>
-								))}
+								{project.members &&
+									project.members.map((member) => (
+										<Avatar
+											key={member.id}
+											alt={member.name}
+											src={member.avatarUrl}
+										/>
+									))}
 							</AvatarGroup>
 						</Grid>
 						<Grid item xs={12} sm={5}>
@@ -93,7 +119,8 @@ const ProjectListItem = ({ project }) => {
 				>
 					<Button
 						component={Link}
-						to={`/manager/projects/${project.id}`}
+						// *** CHANGE 3: Use the dynamic link ***
+						to={projectLink}
 						variant="contained"
 						endIcon={<OpenInNewIcon />}
 					>

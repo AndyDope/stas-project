@@ -1,22 +1,18 @@
 package com.cdac.groupseven.stas.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cdac.groupseven.stas.dto.AuthResponse;
+import com.cdac.groupseven.stas.dto.UserDto;
 import com.cdac.groupseven.stas.dto.UserLoginRequestDto;
-import com.cdac.groupseven.stas.dto.UserResponseDto;
 import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
 import com.cdac.groupseven.stas.dto.UserUpdateDto;
-import com.cdac.groupseven.stas.entity.User;
-import com.cdac.groupseven.stas.repository.UserRepository;
 import com.cdac.groupseven.stas.service.UserService;
 
 //@CrossOrigin
@@ -26,35 +22,35 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
     
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> signup(@RequestBody UserSignupRequestDto dto) {
+    public ResponseEntity<UserDto> signup(@RequestBody UserSignupRequestDto dto) {
         try {
-			UserResponseDto user = userService.signup(dto);
+			UserDto user = userService.signup(dto);
 			return ResponseEntity.ok(user);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().build();
 		}
     }
-    
+   
+
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDto> login(@RequestBody UserLoginRequestDto dto) {
-        return ResponseEntity.ok(userService.login(dto));
-    }
-    
-    @GetMapping("/all")
-    public List<User> getAllUsers() {
-		return userRepository.findAll();
-		
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserLoginRequestDto authRequest) throws Exception {
+
+    	AuthResponse authResponse;
+		try {
+			authResponse = userService.login(authRequest);
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(401).body("Error: Invalid credentials");
+		}
+    	
+        return ResponseEntity.ok(authResponse);	
     }
     
     @PutMapping("/me")
-    public ResponseEntity<UserResponseDto> updateProfile(@RequestBody UserUpdateDto dto) {
+    public ResponseEntity<UserDto> updateProfile(@RequestBody UserUpdateDto dto) {
         try {
-			UserResponseDto user = userService.updateDetails(dto);
+			UserDto user = userService.updateDetails(dto);
 			return ResponseEntity.ok(user);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().build();

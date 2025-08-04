@@ -10,7 +10,7 @@ const StatCard = ({ title, value, icon }) => {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "space-between",
-				height: "100%",
+				height: "100%", // *** THIS IS THE FIX ***
 			}}
 		>
 			<Box>

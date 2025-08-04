@@ -9,50 +9,70 @@ import {
 	ListItemText,
 	Divider,
 	CircularProgress,
+	Alert,
+	Chip,
 } from "@mui/material";
 import StatCard from "../components/dashboard/StatCard";
 import ProjectStatusChart from "../components/dashboard/ProjectStatusChart";
-import FolderIcon from "@mui/icons-material/Folder";
+import clientService from "../services/clientService";
+
+import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import SyncIcon from "@mui/icons-material/Sync";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
-import dsahboardService from "../services/dashboadService";
-import dashboadService from "../services/dashboadService";
+
+// *** THIS IS THE STYLING LOGIC COPIED FROM ProjectListItem.jsx ***
+// It provides the custom background colors for the status badges.
+const getStatusChipStyles = (status) => {
+	const style = {
+		color: "#fff", // White text for good contrast
+		fontWeight: "bold",
+	};
+	switch (status) {
+		case "COMPLETED":
+			style.backgroundColor = "#10B981"; // Green
+			break;
+		case "ONGOING":
+			style.backgroundColor = "#3B82F6"; // Blue
+			break;
+		case "PENDING":
+			style.backgroundColor = "#F59E0B"; // Amber
+			break;
+		case "DELAYED":
+		case "AT RISK":
+			style.backgroundColor = "#EF4444"; // Red
+			break;
+		case "ONHOLD":
+			style.backgroundColor = "#6B7286"; // Medium Gray
+			break;
+		default:
+			style.backgroundColor = "#9E9E9E"; // A neutral gray
+			break;
+	}
+	return style;
+};
 
 const ClientDashboardPage = () => {
-	const [stats, setStats] = useState({
-		total: 5,
-		active: 2,
-		completed: 2,
-		overdue: 1,
-	});
+	const [stats, setStats] = useState(null);
 	const [recentProjects, setRecentProjects] = useState([]);
-	const [loading, setLoading] = useState(true); // Start in a loading state
+	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	// 2. Use useEffect to fetch data when the component mounts
 	useEffect(() => {
 		const fetchDashboardData = async () => {
 			try {
-				// The await keyword "waits" for the promise to resolve
-				const response = await dashboadService.getClientDashboardStats();
-
-				// The actual data is in response.data
-				setStats(response.data);
+				const response = await clientService.getClientDashboardStats();
+				setStats(response.data.stats);
 				setRecentProjects(response.data.recentProjects);
 			} catch (err) {
 				setError("Failed to load dashboard data. Please try again later.");
-				console.error("Error fetching dashboard data:", err);
 			} finally {
-				// This runs whether the request succeeded or failed
 				setLoading(false);
 			}
 		};
-
 		fetchDashboardData();
-	}, []); // The empty array [] means this effect runs only once, like componentDidMount
+	}, []);
 
-	// 3. Conditional rendering based on the state
 	if (loading) {
 		return (
 			<Box
@@ -72,60 +92,99 @@ const ClientDashboardPage = () => {
 		return <Alert severity="error">{error}</Alert>;
 	}
 
-	// const stats = { total: 12, active: 5, completed: 6, overdue: 1 };
-	// const data = dsahboardService.clientStats();
-	// const stats = { data };
-	// console.log(data);
-	// console.log(stats);
-
-	// const recentProjects = [
-	// 	/* ... mock data ... */
-	// ];
+	if (!stats) {
+		return <Alert severity="info">No dashboard data available.</Alert>;
+	}
 
 	return (
 		<Box>
 			<Typography variant="h4" sx={{ mb: 3 }}>
 				Client Dashboard
 			</Typography>
+
 			<Grid container spacing={3}>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
-						title="Total Projects"
-						value={stats.total}
-						icon={<FolderIcon color="primary" />}
+						title="Pending"
+						value={stats.pending}
+						icon={<PendingActionsIcon color="warning" />}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
-						title="Active Projects"
+						title="Active"
 						value={stats.active}
-						icon={<SyncIcon color="warning" />}
+						icon={<SyncIcon color="primary" />}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Completed"
 						value={stats.completed}
 						icon={<CheckCircleIcon color="success" />}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Overdue"
 						value={stats.overdue}
 						icon={<ErrorIcon color="error" />}
 					/>
 				</Grid>
-				<Grid item xs={12} md={7}>
+			</Grid>
+
+			<Grid container spacing={3} sx={{ mt: 3 }}>
+				<Grid size={{ xs: 12, md: 5 }}>
 					<Paper sx={{ p: 2, height: 380 }}>
-						<Typography variant="h6">Projects Overview</Typography>
-						<ProjectStatusChart data={stats} />
+						<Typography variant="h6" gutterBottom>
+							Projects Overview
+						</Typography>
+						<Box sx={{ height: "calc(100% - 30px)" }}>
+							<ProjectStatusChart data={stats} />
+						</Box>
 					</Paper>
 				</Grid>
-				<Grid item xs={12} md={5}>
-					<Paper sx={{ p: 2, height: 380 }}>
-						<Typography variant="h6">Recent Projects</Typography>
-						{/* List component here */}
+
+				<Grid size={{ xs: 12, md: 7 }}>
+					<Paper
+						sx={{ p: 2, height: 380, display: "flex", flexDirection: "column" }}
+					>
+						<Typography variant="h6" gutterBottom>
+							Recent Projects
+						</Typography>
+						<List sx={{ overflow: "auto" }}>
+							{recentProjects.map((project, index) => (
+								<React.Fragment key={project.id}>
+									<ListItem
+										secondaryAction={
+											// *** THIS IS THE CHANGE ***
+											// We replace the `color` prop with the `sx` prop
+											// and use our new styling function.
+											<Chip
+												label={project.status}
+												size="small"
+												sx={getStatusChipStyles(project.status)}
+											/>
+										}
+									>
+										<ListItemText
+											primary={project.title}
+											sx={{
+												marginRight: "120px",
+												"& .MuiListItemText-primary": {
+													whiteSpace: "nowrap",
+													overflow: "hidden",
+													textOverflow: "ellipsis",
+												},
+											}}
+										/>
+									</ListItem>
+									{index < recentProjects.length - 1 && (
+										<Divider component="li" />
+									)}
+								</React.Fragment>
+							))}
+						</List>
 					</Paper>
 				</Grid>
 			</Grid>

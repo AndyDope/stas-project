@@ -27,24 +27,24 @@ const MyProfilePage = () => {
   };
 
   const handleProfileSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess('');
-    try {
-      // Assuming the backend API returns the fully updated user object
-      const response = await userService.updateMyProfile(profileData);
-      updateUser(response.data); // Update the global state
-        
-      setSuccess('Profile updated successfully!');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update profile.');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handlePasswordSubmit = async (e) => {
+		e.preventDefault();
+		setLoading(true);
+		setError("");
+		setSuccess("");
+		try {
+			// Assuming the backend API returns the fully updated user object
+			const response = await userService.updateMyProfile(profileData);
+			updateUser(response.data); // Update the global state
+
+			setSuccess("Profile updated successfully!");
+		} catch (err) {
+			setError(err.response?.data?.message || "Failed to update profile.");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handlePasswordSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
 		setError("");
@@ -60,13 +60,13 @@ const MyProfilePage = () => {
 		}
 	};
 
-  return (
+	return (
 		<Box>
 			<Typography variant="h4" sx={{ mb: 3 }}>
 				My Profile
 			</Typography>
 			<Grid container spacing={4}>
-				<Grid item xs={12} md={6}>
+				<Grid size={{ xs: 12, md: 6, lg: 4 }}>
 					<Paper sx={{ p: 4 }}>
 						<Typography variant="h6" gutterBottom>
 							Profile Information
@@ -105,7 +105,7 @@ const MyProfilePage = () => {
 				{/* ... Password Change Form ... */}
 
 				{/* Change Password Form */}
-				<Grid item xs={12} md={6}>
+				<Grid size={{ xs: 12, md: 6, lg: 4 }}>
 					<Paper sx={{ p: 4 }}>
 						<Typography variant="h6" gutterBottom>
 							Change Password

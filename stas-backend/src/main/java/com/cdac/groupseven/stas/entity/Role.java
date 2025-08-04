@@ -13,8 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String roleName; // e.g., Admin, Client, Manager, Developer
+    
+    public Role(String roleName) {
+    	this.roleName = roleName;
+    }
 }

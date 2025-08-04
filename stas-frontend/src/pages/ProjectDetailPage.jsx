@@ -1,25 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button, Paper } from "@mui/material";
 import { useParams } from "react-router-dom";
 import KanbanBoard from "../components/projects/KanbanBoard";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
+import RateReviewIcon from "@mui/icons-material/RateReview"; // New Icon
+import TaskFeedbackModal from "../components/projects/TaskFeedbackModal"; // Import the modal
 
 const ProjectDetailPage = () => {
 	const { projectId } = useParams();
-	const project = {
-		title: "New Mobile App",
-		description: "The official app for our new product launch.",
-	};
+	const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
 
-	// Mock data for this specific project - replace with an API call
+	// Mock data - replace with API calls
+	const project = { title: "New Mobile App", description: "..." };
 	const projectTasks = [
 		{ id: 1, title: "Setup database schema", status: "Done" },
 		{ id: 2, title: "Create login API", status: "In Review" },
-		{ id: 3, title: "Build login page UI", status: "In Progress" },
-		{ id: 4, title: "Implement JWT", status: "In Progress" },
-		{ id: 5, title: "Add project creation form", status: "To Do" },
-		{ id: 6, title: "Design the main dashboard", status: "Backlog" },
+	];
+	const projectMembers = [
+		{ id: 13, name: "Developer Alice" },
+		{ id: 14, name: "Developer Bob" },
 	];
 
 	return (
@@ -32,6 +32,14 @@ const ProjectDetailPage = () => {
 				<Button variant="outlined" startIcon={<PeopleOutlineIcon />}>
 					Manage Team
 				</Button>
+				{/* This button opens the new feedback modal */}
+				<Button
+					variant="outlined"
+					startIcon={<RateReviewIcon />}
+					onClick={() => setFeedbackModalOpen(true)}
+				>
+					Give Feedback
+				</Button>
 				<Button variant="contained" startIcon={<AddTaskIcon />}>
 					Create Task
 				</Button>
@@ -39,6 +47,14 @@ const ProjectDetailPage = () => {
 			<Paper elevation={3} sx={{ p: { xs: 1, sm: 2 } }}>
 				<KanbanBoard initialTasks={projectTasks} />
 			</Paper>
+
+			{/* The Modal component is here, but invisible until opened */}
+			<TaskFeedbackModal
+				open={feedbackModalOpen}
+				onClose={() => setFeedbackModalOpen(false)}
+				tasks={projectTasks}
+				members={projectMembers}
+			/>
 		</Box>
 	);
 };

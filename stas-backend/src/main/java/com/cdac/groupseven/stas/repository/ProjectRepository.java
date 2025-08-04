@@ -3,6 +3,8 @@ package com.cdac.groupseven.stas.repository;
 import java.util.List;
 import java.util.Optional; //returns null if not found
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +16,6 @@ import com.cdac.groupseven.stas.enums.ProjectStatus;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<User> findByTitle(String title);    
     Optional<List<Project>> findByStatus(ProjectStatus status);
-    Optional<List<Project>> findByClient_Id(Long id);
+    List<Project> findByClientEmail(String email);
+    Page<Project> findByClientEmail(String email, Pageable pageable);    
 }
