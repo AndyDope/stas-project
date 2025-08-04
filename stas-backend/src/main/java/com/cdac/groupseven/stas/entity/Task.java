@@ -28,6 +28,7 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+    
     private LocalDate dueDate; 
 
     @ManyToOne

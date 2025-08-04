@@ -15,4 +15,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<User> findByTitle(String title);    
     Optional<List<Project>> findByStatus(ProjectStatus status);
     Optional<List<Project>> findByClient_Id(Long id);
+    Optional<List<Project>> findByManager_Id(Long id);
+
 }

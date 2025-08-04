@@ -27,9 +27,9 @@ public class DashboardServiceImpl implements DashboardService {
 		ClientDashboardStats clientDashboardStats = new ClientDashboardStats();
 		
 		clientDashboardStats.setTotal(projects.size());
-		clientDashboardStats.setActive(projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.ONGOING)).count());
-		clientDashboardStats.setCompleted(projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.COMPLETED)).count());
-		clientDashboardStats.setOverdue(projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.DELAYED)).count());
+		clientDashboardStats.setActive(projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.Ongoing)).count());
+		clientDashboardStats.setCompleted(projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.Completed)).count());
+		clientDashboardStats.setOverdue(projects.stream().filter(project -> project.getStatus().equals(ProjectStatus.Delayed)).count());
 		
 		return clientDashboardStats;
 	}

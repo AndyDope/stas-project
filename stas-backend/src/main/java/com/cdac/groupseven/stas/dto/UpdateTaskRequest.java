@@ -1,16 +1,20 @@
 package com.cdac.groupseven.stas.dto;
 
-import com.cdac.groupseven.stas.enums.TaskStatus;
-import lombok.Data;
 import java.time.LocalDate;
+import com.cdac.groupseven.stas.enums.TaskStatus;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class HighPriorityTaskDto {
-    private Long id;
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateTaskRequest {
     private String title;
-    private String projectTitle;
     private String description;
     private LocalDate dueDate;
+    private Long assignedTo;
+    private Long projectId;
     private TaskStatus status;
 }
-

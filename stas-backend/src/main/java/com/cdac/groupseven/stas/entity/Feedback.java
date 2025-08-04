@@ -22,6 +22,8 @@ public class Feedback {
     private Long id;
 
     private String content;
+    
+    private int rating; // Rating out of 5
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)

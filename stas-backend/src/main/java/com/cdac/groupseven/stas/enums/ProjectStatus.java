@@ -1,9 +1,9 @@
 package com.cdac.groupseven.stas.enums;
 
 public enum ProjectStatus {
-	ONGOING,
-	PENDING,
-	DELAYED,
-	ONHOLD,
-	COMPLETED
+	Ongoing,
+	Pending,
+	Delayed,
+	OnHold,
+	Completed
 }

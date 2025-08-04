@@ -41,8 +41,8 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public int getTotalActiveProjectsCount() {
-		int count = projectRepo.findByStatus(ProjectStatus.ONGOING).get().size();
-		count += projectRepo.findByStatus(ProjectStatus.DELAYED).get().size();
+		int count = projectRepo.findByStatus(ProjectStatus.Pending).get().size();
+		count += projectRepo.findByStatus(ProjectStatus.Delayed).get().size();
 		return count;
 	}
 

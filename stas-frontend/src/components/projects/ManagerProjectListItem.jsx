@@ -10,6 +10,7 @@ import {
   Avatar,
 } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { useNavigate } from "react-router-dom";
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -24,7 +25,8 @@ const getStatusColor = (status) => {
   }
 };
 
-const ProjectListItem = ({ project }) => {
+const ManagerProjectListItem = ({ project }) => {
+  const navigate = useNavigate();
   return (
     <Paper
       elevation={0}
@@ -104,7 +106,7 @@ const ProjectListItem = ({ project }) => {
           <Button
             variant="contained"
             endIcon={<OpenInNewIcon />}
-            href={`/manager/projects/${project.id}`}
+            onClick={() => navigate(`/manager/projects/${project.id}`)}
             size="small"
           >
             View
@@ -115,4 +117,4 @@ const ProjectListItem = ({ project }) => {
   );
 };
 
-export default ProjectListItem;
+export default ManagerProjectListItem;

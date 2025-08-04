@@ -30,6 +30,8 @@ public class Project {
 
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
+    
+    
 
     @ManyToOne
     @JoinColumn(name = "client_id")
