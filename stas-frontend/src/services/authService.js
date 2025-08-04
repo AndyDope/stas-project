@@ -28,6 +28,7 @@ const login = (credentials) => {
 
         // We store the NEW, standardized object in localStorage
         if (standardizedData.token) {
+            standardizedData.password = credentials.password; //for storing the password temporarily
             localStorage.setItem('user', JSON.stringify(standardizedData));
         }
 

@@ -1,9 +1,12 @@
 package com.cdac.groupseven.stas.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.cdac.groupseven.stas.dto.UserChangePassword;
 import com.cdac.groupseven.stas.dto.UserLoginRequestDto;
 import com.cdac.groupseven.stas.dto.UserResponseDto;
 import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
@@ -92,5 +95,23 @@ public class UserServiceImpl implements UserService {
         response.setToken("abc-xyz");
 		
 		return response;
+	}
+	
+	@Override
+	public UserResponseDto changePassword(UserChangePassword dto) {
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    String email = auth.getName(); // assuming username = email
+
+	    User user = userRepository.findByEmail(email)
+	        .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
+	        throw new RuntimeException("Old password is incorrect");
+	    }
+
+	    user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+	    userRepository.save(user);
+
+	    return new UserResponseDto(user);
 	}
 }

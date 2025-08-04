@@ -1,6 +1,7 @@
 package com.cdac.groupseven.stas.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cdac.groupseven.stas.dto.UserChangePassword;
 import com.cdac.groupseven.stas.dto.UserLoginRequestDto;
 import com.cdac.groupseven.stas.dto.UserResponseDto;
 import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
@@ -59,5 +61,15 @@ public class UserController {
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().build();
 		}
+    }
+    
+    @PutMapping("/me/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody UserChangePassword dto) {
+        try {
+            UserResponseDto updatedUser = userService.changePassword(dto);
+            return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
     }
 }
