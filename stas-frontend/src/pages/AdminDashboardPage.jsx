@@ -127,41 +127,8 @@ const AdminDashboardPage = () => {
 						icon={<BuildIcon color="primary" />}
 					/>
 				</Grid>
-			</Grid>
-			{/* <Grid item xs={12} md={7}>
+				<Grid item xs={12} md={7}>
 					<Paper sx={{ p: 2, height: 380 }}>
-						<Typography variant="h6">User Role Distribution</Typography>
-						<ProjectStatusChart
-							data={{
-								total: stats.totalUsers,
-								active: developerCount,
-								completed: managerCount,
-								overdue: clientCount + adminCount, // group client + admin for "overdue" placeholder
-							}}
-						/>
-					</Paper>
-				</Grid> */}
-
-			{/* <Grid item xs={12} md={5}>
-					<Paper sx={{ p: 2, height: 380 }}>
-						<Typography variant="h6" gutterBottom>
-							Recent Activity
-						</Typography>
-						<List>
-							{recentActivity.map((item, index) => (
-								<React.Fragment key={item.id}>
-									<ListItem>
-										<ListItemText primary={item.text} />
-									</ListItem>
-									{index < recentActivity.length - 1 && <Divider />}
-								</React.Fragment>
-							))}
-						</List>
-					</Paper>
-				</Grid> */}
-			<Grid container spacing={3} sx={{ mt: 3 }}>
-				<Grid size={{ xs: 12, md: 6, lg: 4 }}>
-					<Paper sx={{ p: 2, pb: 6, height: 380 }}>
 						<Typography variant="h6">User Role Distribution</Typography>
 						<ProjectStatusChart data={chartData} label={" total users"} />
 					</Paper>

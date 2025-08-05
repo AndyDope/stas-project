@@ -3,6 +3,9 @@ import { Box, Typography, Paper, Grid, TextField, Button, CircularProgress, Aler
 import { useAuth } from '../context/AuthContext';
 import userService from '../services/userService';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Snackbar } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import EditProfileDialog from "./EditProfileDialog";
 
 const MyProfilePage = () => {
 	const { user, updateUser } = useAuth();
@@ -12,7 +15,6 @@ const MyProfilePage = () => {
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
 
-	// const [profileLoading, setProfileLoading] = useState(false);
 	const [passwordLoading, setPasswordLoading] = useState(false);
 
 	// This useEffect ensures the form is always in sync with the global user state
@@ -22,13 +24,13 @@ const MyProfilePage = () => {
 		}
 	}, [user]);
 
+
+
 	const handleProfileChange = (e) => {
 		setProfileData({ ...profileData, [e.target.name]: e.target.value });
 	};
 
-	const handlePasswordChange = (e) => {
-		setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
-	};
+	const [isEditing, setIsEditing] = useState(false);
 
 	const handleProfileSubmit = async (e) => {
 		e.preventDefault();
@@ -47,11 +49,23 @@ const MyProfilePage = () => {
 			setLoading(false);
 		}
 	};
+	const [editOpen, setEditOpen] = useState(false);
+
+	// ----------------------------------------------------------------------------------------------------
+	const handlePasswordChange = (e) => {
+		setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+	};
 
 	const [showPasswords, setShowPasswords] = useState({
 		old: false,
 		new: false,
 		confirm: false,
+	});
+
+	const [snackbar, setSnackbar] = useState({
+		open: false,
+		message: '',
+		severity: 'success'
 	});
 
 	const handlePasswordSubmit = async (e) => {
@@ -77,6 +91,9 @@ const MyProfilePage = () => {
 		try {
 			await userService.changePassword(passwordData);
 			setSnackbar({ open: true, message: "Password changed successfully!", severity: "success" });
+			setTimeout(() => {
+				setSnackbar((prev) => ({ ...prev, open: false }));
+			}, 3000); // optional: auto close fallback
 			setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
 		} catch (err) {
 			setSnackbar({
@@ -208,16 +225,16 @@ const MyProfilePage = () => {
 					</Paper>
 				</Grid>
 			</Grid>
-			{success && (
-				<Alert severity="success" sx={{ mt: 3 }}>
-					{success}
+			<Snackbar
+				open={snackbar.open}
+				autoHideDuration={3000}
+				onClose={handleSnackbarClose}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+			>
+				<Alert severity={snackbar.severity} onClose={handleSnackbarClose} sx={{ width: "100%" }}>
+					{snackbar.message}
 				</Alert>
-			)}
-			{error && (
-				<Alert severity="error" sx={{ mt: 3 }}>
-					{error}
-				</Alert>
-			)}
+			</Snackbar>
 		</Box>
 	);
 };
