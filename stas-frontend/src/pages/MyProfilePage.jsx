@@ -1,32 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Grid, TextField, Button, CircularProgress, Alert } from '@mui/material';
+import { Box, Typography, Paper, Grid, TextField, Button, CircularProgress, Alert, InputAdornment, IconButton } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import userService from '../services/userService';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const MyProfilePage = () => {
-  const { user, updateUser } = useAuth();
-  const [profileData, setProfileData] = useState({ id: '', name: '', email: '' });
-  const [passwordData, setPasswordData] = useState({ oldPassword: '', newPassword: '' });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+	const { user, updateUser } = useAuth();
+	const [profileData, setProfileData] = useState({ id: '', name: '', email: '' });
+	const [passwordData, setPasswordData] = useState({ oldPassword: '', newPassword: '', confirmPassword: "" });
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState('');
+	const [success, setSuccess] = useState('');
 
-  // This useEffect ensures the form is always in sync with the global user state
-  useEffect(() => {
-    if (user) {
-      setProfileData({ id: user.id, name: user.name, email: user.email });
-    }
-  }, [user]);
+	// const [profileLoading, setProfileLoading] = useState(false);
+	const [passwordLoading, setPasswordLoading] = useState(false);
 
-  const handleProfileChange = (e) => {
-    setProfileData({ ...profileData, [e.target.name]: e.target.value });
-  };
 
-  const handlePasswordChange = (e) => {
-    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
-  };
 
-  const handleProfileSubmit = async (e) => {
+	// This useEffect ensures the form is always in sync with the global user state
+	useEffect(() => {
+		if (user) {
+			setProfileData({ id: user.id, name: user.name, email: user.email });
+		}
+	}, [user]);
+
+	const handleProfileChange = (e) => {
+		setProfileData({ ...profileData, [e.target.name]: e.target.value });
+	};
+
+	const handlePasswordChange = (e) => {
+		setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+	};
+
+	const handleProfileSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
 		setError("");
@@ -44,20 +50,69 @@ const MyProfilePage = () => {
 		}
 	};
 
+	// const handlePasswordSubmit = async (e) => {
+	// 	e.preventDefault();
+	// 	setLoading(true);
+	// 	setError("");
+	// 	setSuccess("");
+	// 	try {
+	// 		await userService.changePassword(passwordData);
+	// 		setSuccess("Password changed successfully!");
+	// 		setPasswordData({ oldPassword: "", newPassword: "" }); // Clear fields on success
+	// 	} catch (err) {
+	// 		setError(err.response?.data?.message || "Failed to change password.");
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// };
+
+	const [showPasswords, setShowPasswords] = useState({
+		old: false,
+		new: false,
+		confirm: false,
+	});
+
 	const handlePasswordSubmit = async (e) => {
 		e.preventDefault();
-		setLoading(true);
-		setError("");
-		setSuccess("");
+		setPasswordLoading(true);
+
+		if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+			setSnackbar({ open: true, message: "All fields are required.", severity: "warning" });
+			setPasswordLoading(false);
+			return;
+		}
+		if (passwordData.newPassword !== passwordData.confirmPassword) {
+			setSnackbar({ open: true, message: "New passwords do not match.", severity: "error" });
+			setPasswordLoading(false);
+			return;
+		}
+		if (passwordData.oldPassword === passwordData.newPassword) {
+			setSnackbar({ open: true, message: "New password must be different.", severity: "warning" });
+			setPasswordLoading(false);
+			return;
+		}
+
 		try {
 			await userService.changePassword(passwordData);
-			setSuccess("Password changed successfully!");
-			setPasswordData({ oldPassword: "", newPassword: "" }); // Clear fields on success
+			setSnackbar({ open: true, message: "Password changed successfully!", severity: "success" });
+			setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
 		} catch (err) {
-			setError(err.response?.data?.message || "Failed to change password.");
+			setSnackbar({
+				open: true,
+				message: err.response?.data?.message || "Failed to change password.",
+				severity: "error",
+			});
 		} finally {
-			setLoading(false);
+			setPasswordLoading(false);
 		}
+	};
+
+	const togglePasswordVisibility = (field) => {
+		setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
+	};
+
+	const handleSnackbarClose = () => {
+		setSnackbar((prev) => ({ ...prev, open: false }));
 	};
 
 	return (
@@ -105,39 +160,54 @@ const MyProfilePage = () => {
 				{/* ... Password Change Form ... */}
 
 				{/* Change Password Form */}
-				<Grid size={{ xs: 12, md: 6, lg: 4 }}>
+				<Grid item xs={12} md={6}>
 					<Paper sx={{ p: 4 }}>
 						<Typography variant="h6" gutterBottom>
 							Change Password
 						</Typography>
 						<Box component="form" onSubmit={handlePasswordSubmit}>
-							<TextField
-								fullWidth
-								margin="normal"
-								label="Current Password"
-								name="oldPassword"
-								type="password"
-								value={passwordData.oldPassword}
-								onChange={handlePasswordChange}
-								required
-							/>
-							<TextField
-								fullWidth
-								margin="normal"
-								label="New Password"
-								name="newPassword"
-								type="password"
-								value={passwordData.newPassword}
-								onChange={handlePasswordChange}
-								required
-							/>
+							{["oldPassword", "newPassword", "confirmPassword"].map((field, i) => (
+								<TextField
+									key={field}
+									fullWidth
+									margin="normal"
+									label={
+										field === "oldPassword"
+											? "Current Password"
+											: field === "newPassword"
+												? "New Password"
+												: "Confirm New Password"
+									}
+									name={field}
+									type={showPasswords[field.replace("Password", "")] ? "text" : "password"}
+									value={passwordData[field]}
+									onChange={handlePasswordChange}
+									required
+									InputProps={{
+										endAdornment: (
+											<InputAdornment position="end">
+												<IconButton
+													onClick={() =>
+														togglePasswordVisibility(field.replace("Password", ""))
+													}
+													edge="end"
+												>
+													{showPasswords[field.replace("Password", "")]
+														? <VisibilityOff />
+														: <Visibility />}
+												</IconButton>
+											</InputAdornment>
+										),
+									}}
+								/>
+							))}
 							<Button
 								type="submit"
 								variant="contained"
 								sx={{ mt: 2 }}
-								disabled={loading}
+								disabled={passwordLoading}
 							>
-								{loading ? <CircularProgress size={24} /> : "Change Password"}
+								{passwordLoading ? <CircularProgress size={24} /> : "Change Password"}
 							</Button>
 						</Box>
 					</Paper>
