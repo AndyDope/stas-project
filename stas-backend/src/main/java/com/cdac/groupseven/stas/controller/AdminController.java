@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.cdac.groupseven.stas.dto.AdminDashboardDto;
+import com.cdac.groupseven.stas.dto.ProjectDto;
 import com.cdac.groupseven.stas.dto.UserChangePassword;
 import com.cdac.groupseven.stas.dto.UserManageDto;
 import com.cdac.groupseven.stas.dto.UserResponseDto;
@@ -20,6 +21,7 @@ import com.cdac.groupseven.stas.entity.User;
 import com.cdac.groupseven.stas.repository.RoleRepository;
 import com.cdac.groupseven.stas.repository.UserRepository;
 import com.cdac.groupseven.stas.service.AdminService;
+import com.cdac.groupseven.stas.service.ProjectService;
 import com.cdac.groupseven.stas.service.UserService;
 @RestController
 @RequestMapping("/api/admin")
@@ -37,6 +39,9 @@ public class AdminController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ProjectService projectService;
     
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
