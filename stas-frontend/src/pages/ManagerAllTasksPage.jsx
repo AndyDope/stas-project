@@ -26,7 +26,7 @@ const getProjectStatusColor = (status) => {
   }
 };
 
-const statusOrder = ["OVERDUE", "ACTIVE", "PENDING", "COMPLETED"];
+const statusOrder = ["ACTIVE", "COMPLETED", "OVERDUE", "PENDING", "INREVIEW"];
 
 const groupAndSortTasks = (tasks) => {
   const groups = {};

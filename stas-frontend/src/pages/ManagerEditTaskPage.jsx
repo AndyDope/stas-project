@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
 
-const taskStatuses = ["ACTIVE", "COMPLETED", "OVERDUE", "PENDING"];
+const taskStatuses = ["ACTIVE", "COMPLETED", "OVERDUE", "PENDING", "INREVIEW"];
 
 const ManagerEditTaskPage = () => {
   const storedUser = JSON.parse(localStorage?.getItem("user") || "{}");
