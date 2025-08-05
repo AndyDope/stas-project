@@ -42,9 +42,27 @@ const getProjectById = (projectId) => {
     return axios.get(`${API_URL}/projects/${projectId}`, { headers: getAuthHeaders() });
 }
 
+/**
+ * NEW FUNCTION: Updates the details for a specific project.
+ * @param {number} projectId - The ID of the project to update.
+ * @param {object} projectData - The data to update (e.g., { title, description, endDate }).
+ */
+const updateProject = (projectId, projectData) => {
+    return axios.put(`${API_URL}/projects/${projectId}`, projectData, { headers: getAuthHeaders() });
+};
+
+/**
+ * Fetches a list of all managers with their project counts.
+ */
+const getAvailableManagers = () => {
+    return axios.get(`${API_URL}/available-managers`, { headers: getAuthHeaders() });
+};
+
 export default {
     getClientDashboardStats,
     getProjects,
     createNewProject,
     getProjectById,
+    updateProject,
+    getAvailableManagers,
 };

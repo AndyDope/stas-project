@@ -204,13 +204,10 @@ const UserManagementPage = () => {
 			setSnackbarMessage("Admin created successfully!");
 			setSnackbarOpen(true);
 		} catch (err) {
-			console.error("Create admin failed", err);
 			setSnackbarMessage("Failed to create admin.");
 			setSnackbarOpen(true);
 		}
 	};
-
-
 
 	return (
 		<Box>
@@ -242,10 +239,16 @@ const UserManagementPage = () => {
 									<TableCell>{user.email}</TableCell>
 									<TableCell>{user.role}</TableCell>
 									<TableCell align="right">
-										<IconButton color="primary" onClick={() => handleEditClick(user)}>
+										<IconButton
+											color="primary"
+											onClick={() => handleEditClick(user)}
+										>
 											<EditIcon />
 										</IconButton>
-										<IconButton color="error" onClick={() => handleDelete(user.id)}>
+										<IconButton
+											color="error"
+											onClick={() => handleDelete(user.id)}
+										>
 											<DeleteIcon />
 										</IconButton>
 									</TableCell>
@@ -282,7 +285,7 @@ const UserManagementPage = () => {
 				<Alert
 					onClose={() => setSnackbarOpen(false)}
 					severity="success"
-					sx={{ width: "100%" }}
+					sx={{ width: "100%", color: "#000" }}
 				>
 					{snackbarMessage}
 				</Alert>

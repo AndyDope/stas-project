@@ -15,8 +15,6 @@ const MyProfilePage = () => {
 	// const [profileLoading, setProfileLoading] = useState(false);
 	const [passwordLoading, setPasswordLoading] = useState(false);
 
-
-
 	// This useEffect ensures the form is always in sync with the global user state
 	useEffect(() => {
 		if (user) {
@@ -49,22 +47,6 @@ const MyProfilePage = () => {
 			setLoading(false);
 		}
 	};
-
-	// const handlePasswordSubmit = async (e) => {
-	// 	e.preventDefault();
-	// 	setLoading(true);
-	// 	setError("");
-	// 	setSuccess("");
-	// 	try {
-	// 		await userService.changePassword(passwordData);
-	// 		setSuccess("Password changed successfully!");
-	// 		setPasswordData({ oldPassword: "", newPassword: "" }); // Clear fields on success
-	// 	} catch (err) {
-	// 		setError(err.response?.data?.message || "Failed to change password.");
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// };
 
 	const [showPasswords, setShowPasswords] = useState({
 		old: false,
@@ -157,57 +139,70 @@ const MyProfilePage = () => {
 						</Box>
 					</Paper>
 				</Grid>
-				{/* ... Password Change Form ... */}
 
 				{/* Change Password Form */}
-				<Grid item xs={12} md={6}>
+				<Grid size={{ xs: 12, md: 6, lg: 4 }}>
 					<Paper sx={{ p: 4 }}>
 						<Typography variant="h6" gutterBottom>
 							Change Password
 						</Typography>
 						<Box component="form" onSubmit={handlePasswordSubmit}>
-							{["oldPassword", "newPassword", "confirmPassword"].map((field, i) => (
-								<TextField
-									key={field}
-									fullWidth
-									margin="normal"
-									label={
-										field === "oldPassword"
-											? "Current Password"
-											: field === "newPassword"
+							{["oldPassword", "newPassword", "confirmPassword"].map(
+								(field, i) => (
+									<TextField
+										key={field}
+										fullWidth
+										margin="normal"
+										label={
+											field === "oldPassword"
+												? "Current Password"
+												: field === "newPassword"
 												? "New Password"
 												: "Confirm New Password"
-									}
-									name={field}
-									type={showPasswords[field.replace("Password", "")] ? "text" : "password"}
-									value={passwordData[field]}
-									onChange={handlePasswordChange}
-									required
-									InputProps={{
-										endAdornment: (
-											<InputAdornment position="end">
-												<IconButton
-													onClick={() =>
-														togglePasswordVisibility(field.replace("Password", ""))
-													}
-													edge="end"
-												>
-													{showPasswords[field.replace("Password", "")]
-														? <VisibilityOff />
-														: <Visibility />}
-												</IconButton>
-											</InputAdornment>
-										),
-									}}
-								/>
-							))}
+										}
+										name={field}
+										type={
+											showPasswords[field.replace("Password", "")]
+												? "text"
+												: "password"
+										}
+										value={passwordData[field]}
+										onChange={handlePasswordChange}
+										required
+										InputProps={{
+											endAdornment: (
+												<InputAdornment position="end">
+													<IconButton
+														onClick={() =>
+															togglePasswordVisibility(
+																field.replace("Password", "")
+															)
+														}
+														edge="end"
+													>
+														{showPasswords[field.replace("Password", "")] ? (
+															<VisibilityOff />
+														) : (
+															<Visibility />
+														)}
+													</IconButton>
+												</InputAdornment>
+											),
+										}}
+									/>
+								)
+							)}
 							<Button
 								type="submit"
 								variant="contained"
 								sx={{ mt: 2 }}
 								disabled={passwordLoading}
 							>
-								{passwordLoading ? <CircularProgress size={24} /> : "Change Password"}
+								{passwordLoading ? (
+									<CircularProgress size={24} />
+								) : (
+									"Change Password"
+								)}
 							</Button>
 						</Box>
 					</Paper>

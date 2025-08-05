@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cdac.groupseven.stas.dto.AuthResponse;
 import com.cdac.groupseven.stas.dto.UserChangePassword;
 import com.cdac.groupseven.stas.dto.UserDto;
 import com.cdac.groupseven.stas.dto.UserLoginRequestDto;
@@ -39,15 +38,11 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody UserLoginRequestDto authRequest) throws Exception {
-
-    	AuthResponse authResponse;
 		try {
-			authResponse = userService.login(authRequest);
+			return ResponseEntity.ok(userService.login(authRequest));
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(401).body("Error: Invalid credentials");
 		}
-    	
-        return ResponseEntity.ok(authResponse);	
     }
     
     @PutMapping("/me")

@@ -140,7 +140,7 @@ const ClientDashboardPage = () => {
 							Projects Overview
 						</Typography>
 						<Box sx={{ height: "calc(100% - 30px)" }}>
-							<ProjectStatusChart data={stats} />
+							<ProjectStatusChart data={stats} label={"# project"} />
 						</Box>
 					</Paper>
 				</Grid>

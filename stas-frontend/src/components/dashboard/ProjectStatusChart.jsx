@@ -47,12 +47,17 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 // Register necessary chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const ProjectStatusChart = ({ data }) => {
+const ProjectStatusChart = ({ data, label }) => {
 	let labels = [];
 	let dataset = [];
 
 	// Determine the chart type based on keys present in data
-	if ("developers" in data || "managers" in data || "admins" in data || "clients" in data) {
+	if (
+		"developers" in data ||
+		"managers" in data ||
+		"admins" in data ||
+		"clients" in data
+	) {
 		// Admin user role distribution
 		labels = ["Developers", "Managers", "Clients", "Admins"];
 		dataset = [
@@ -76,7 +81,7 @@ const ProjectStatusChart = ({ data }) => {
 		labels,
 		datasets: [
 			{
-				label: "# of Items",
+				label: label,
 				data: dataset,
 				backgroundColor: [
 					"rgba(59, 130, 246, 0.7)", // Blue

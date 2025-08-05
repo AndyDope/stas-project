@@ -14,7 +14,6 @@ import com.cdac.groupseven.stas.dto.AuthResponse;
 import com.cdac.groupseven.stas.dto.UserChangePassword;
 import com.cdac.groupseven.stas.dto.UserDto;
 import com.cdac.groupseven.stas.dto.UserLoginRequestDto;
-import com.cdac.groupseven.stas.dto.UserResponseDto;
 import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
 import com.cdac.groupseven.stas.dto.UserUpdateDto;
 import com.cdac.groupseven.stas.entity.Role;
@@ -126,15 +125,8 @@ public class UserServiceImpl implements UserService {
 
 	    User user = userRepository.findByEmail(email)
 	        .orElseThrow(() -> new RuntimeException("User not found"));
-//	    System.out.println(dto.getOldPassword());
-//	    System.out.println(user.getPassword());
-//	    System.out.println(passwordEncoder.encode(dto.getOldPassword()));
-	    System.out.println(passwordEncoder.encode("admin"));
-	    System.out.println(passwordEncoder.encode("admin"));
-//	    $2a$10$mw1kdv5DMvzOlNS40St3X.cutskMSiOIqipRU.dAnqXXU9KddN0TS
-//	    System.out.println(passwordEncoder.matches(dto.getOldPassword(), user.getPassword()));
-	    if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
-	    	
+
+	    if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {	    	
 	        throw new RuntimeException("Old password is incorrect");
 	    }
 
@@ -142,5 +134,7 @@ public class UserServiceImpl implements UserService {
 	    userRepository.save(user);
 
 	    return new UserDto(user);
+	    
 	}
+
 }

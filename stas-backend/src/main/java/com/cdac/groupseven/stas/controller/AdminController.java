@@ -1,18 +1,21 @@
 package com.cdac.groupseven.stas.controller;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.cdac.groupseven.stas.dto.AdminDashboardDto;
-import com.cdac.groupseven.stas.dto.UserChangePassword;
 import com.cdac.groupseven.stas.dto.UserManageDto;
-import com.cdac.groupseven.stas.dto.UserResponseDto;
 import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
 import com.cdac.groupseven.stas.dto.UserUpdateDto;
 import com.cdac.groupseven.stas.entity.Role;
@@ -20,10 +23,9 @@ import com.cdac.groupseven.stas.entity.User;
 import com.cdac.groupseven.stas.repository.RoleRepository;
 import com.cdac.groupseven.stas.repository.UserRepository;
 import com.cdac.groupseven.stas.service.AdminService;
-import com.cdac.groupseven.stas.service.UserService;
+
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "http://localhost:5173") // for Vite dev server
 public class AdminController {
 
     @Autowired
@@ -35,15 +37,8 @@ public class AdminController {
     @Autowired
     private RoleRepository roleRepository;
     
-    @Autowired
-    private UserService userService;
-    
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-    
-
     @GetMapping("/dashboard-data")
-    public ResponseEntity<AdminDashboardDto> getAdminDashboardData() {
+    public ResponseEntity<Map<String, Object>> getAdminDashboardData() {
         return ResponseEntity.ok(adminService.getAdminDashboardData());
     }
 
@@ -61,31 +56,7 @@ public class AdminController {
     @PostMapping("/create-admin")
     public ResponseEntity<?> createAdminUser(@RequestBody UserSignupRequestDto dto) {
         try {
-            // 1. Validate the roleId
-            if (dto.getRoleId() == null || !dto.getRoleId().equals(1L)) {
-                return ResponseEntity.badRequest().body("Only roleId=1 (ADMIN) is allowed to be created.");
-            }
-
-            // 2. Check if email already exists
-            if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-                return ResponseEntity.badRequest().body("Email already exists.");
-            }
-
-            // 3. Fetch ADMIN role
-            Role role = roleRepository.findByRoleName("ADMIN")
-                    .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
-
-            // 4. Create and save new user
-            User user = new User();
-            user.setName(dto.getName());
-            user.setEmail(dto.getEmail());
-            user.setPassword(passwordEncoder.encode(dto.getPassword()));
-            user.setRole(role);
-
-            userRepository.save(user);
-
-            // 5. Return minimal DTO (no password, no token)
-            return ResponseEntity.ok(new UserManageDto(user));
+            return ResponseEntity.ok(adminService.createAdminUser(dto));
 
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error creating admin: " + e.getMessage());

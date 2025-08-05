@@ -24,9 +24,6 @@ const getId = () => {
  *                              OR { taskId, recipientId, rating, content } for managers.
  */
 const submitFeedback = (feedbackData) => {
-    feedbackData.clientId = getId();
-    console.log(feedbackData);
-    
     return axios.post(`${API_URL}/client`, feedbackData, { headers: getAuthHeaders() });
 };
 

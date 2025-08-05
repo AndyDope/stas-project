@@ -6,8 +6,9 @@ import lombok.Data;
 
 @Data
 public class NewProject {
-	private Long clientId;
-	private LocalDate completionDate;
+
+	private Long managerId;
+	private LocalDate endDate;
 	private String description;
 	private String title;
 }

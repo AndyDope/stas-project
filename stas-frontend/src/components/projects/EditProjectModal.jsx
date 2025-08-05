@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import clientService from "../services/clientService";
 import {
+	Modal,
 	Box,
 	Typography,
-	Paper,
 	TextField,
 	Button,
 	CircularProgress,
@@ -16,11 +14,21 @@ import {
 	Divider,
 	MenuItem,
 } from "@mui/material";
+import clientService from "../../services/clientService";
 
-const CreateProjectPage = () => {
-	// In a real application, you would use useState to manage form state
-	// and an onSubmit handler to send the data to the backend.
+const style = {
+	position: "absolute",
+	top: "50%",
+	left: "50%",
+	transform: "translate(-50%, -50%)",
+	width: { xs: "90%", sm: 500 },
+	bgcolor: "background.paper",
+	boxShadow: 24,
+	p: 4,
+	borderRadius: 2,
+};
 
+const EditProjectModal = ({ open, onClose, project, onSave, status }) => {
 	const [formData, setFormData] = useState({
 		title: "",
 		description: "",
@@ -34,11 +42,19 @@ const CreateProjectPage = () => {
 	});
 	const [loading, setLoading] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
-	const [error, setError] = useState(null);
+	const [error, setError] = useState("");
 	const [success, setSuccess] = useState(null);
-	const navigate = useNavigate();
 
+	// This useEffect pre-fills the form whenever the modal is opened with a new project
 	useEffect(() => {
+		if (project) {
+			setFormData({
+				title: project.title || "",
+				description: project.description || "",
+				endDate: project.endDate || "",
+				managerId: project.manager?.id || "",
+			});
+		}
 		const fetchManagers = async () => {
 			try {
 				setLoading(true);
@@ -64,7 +80,7 @@ const CreateProjectPage = () => {
 			}
 		};
 		fetchManagers();
-	}, []);
+	}, [project, open]);
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -75,16 +91,13 @@ const CreateProjectPage = () => {
 		setSubmitting(true);
 		setError(null);
 		setSuccess(null);
-
 		try {
-			await clientService.createNewProject(formData);
-			setSuccess("Project request submitted successfully!");
-			setTimeout(() => navigate("/client/dashboard"), 2000);
+			// Call the onSave function passed down from the parent page
+			await onSave(formData, "Project updated successfully!");
+			onClose(); // Close the modal on success
 		} catch (err) {
-			setError(
-				err.response?.data ||
-					"Failed to submit project. Please try again later."
-			);
+			setError(err.response?.data || "Failed to update project.");
+		} finally {
 			setSubmitting(false);
 		}
 	};
@@ -98,58 +111,50 @@ const CreateProjectPage = () => {
 	}
 
 	return (
-		<Box>
-			<Typography variant="h4" sx={{ mb: 3 }}>
-				Submit a New Project Request
-			</Typography>
-			<Paper sx={{ p: { xs: 2, sm: 4 } }}>
-				<Typography variant="h6" gutterBottom>
-					Project Details
+		<Modal open={open} onClose={onClose}>
+			<Box sx={style}>
+				<Typography variant="h6" component="h2">
+					Edit Project Details
 				</Typography>
-				<Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-					Fill out the form below with as much detail as possible. Our team will
-					review your request and assign a Project Manager to get started.
-				</Typography>
-				<Box
-					component="form"
-					onSubmit={handleSubmit}
-					noValidate
-					autoComplete="off"
-				>
+				<Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
 					<TextField
-						required
 						name="title"
-						fullWidth
 						label="Project Title"
-						margin="normal"
 						value={formData.title}
 						onChange={handleChange}
+						fullWidth
+						required
+						margin="normal"
 					/>
 					<TextField
-						required
 						name="description"
-						fullWidth
-						multiline
-						rows={4}
 						label="Project Description"
-						margin="normal"
-						placeholder="Describe your project goals, key features, target audience, and any other important details."
 						value={formData.description}
 						onChange={handleChange}
-					/>
-					<TextField
 						fullWidth
 						required
+						multiline
+						rows={4}
+						margin="normal"
+					/>
+					<TextField
 						name="endDate"
+						label="End Date"
+						value={formData.endDate}
+						onChange={handleChange}
 						type="date"
-						label="Ideal Completion Date"
+						fullWidth
+						required
 						margin="normal"
 						InputLabelProps={{ shrink: true }}
-						value={formData.completionDate}
-						onChange={handleChange}
 					/>
 
-					<FormControl fullWidth margin="normal" required>
+					<FormControl
+						fullWidth
+						margin="normal"
+						required
+						disabled={status !== "PENDING" && status !== "ONHOLD"}
+					>
 						<InputLabel id="manager-select-label">Assign a Manager</InputLabel>
 						<Select
 							labelId="manager-select-label"
@@ -190,7 +195,7 @@ const CreateProjectPage = () => {
 					</FormControl>
 
 					{error && (
-						<Alert severity="error" sx={{ mt: 2, width: "100%" }}>
+						<Alert severity="error" sx={{ mt: 2 }}>
 							{error}
 						</Alert>
 					)}
@@ -200,23 +205,18 @@ const CreateProjectPage = () => {
 						</Alert>
 					)}
 
-					<Button
-						type="submit"
-						variant="contained"
-						size="large"
-						sx={{ mt: 3 }}
-						disabled={submitting}
+					<Box
+						sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 1 }}
 					>
-						{submitting ? (
-							<CircularProgress size={24} color="inherit" />
-						) : (
-							"Submit Project Request"
-						)}
-					</Button>
+						<Button onClick={onClose}>Cancel</Button>
+						<Button type="submit" variant="contained" disabled={submitting}>
+							{submitting ? <CircularProgress size={24} /> : "Save Changes"}
+						</Button>
+					</Box>
 				</Box>
-			</Paper>
-		</Box>
+			</Box>
+		</Modal>
 	);
 };
 
-export default CreateProjectPage;
+export default EditProjectModal;
