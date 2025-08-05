@@ -10,4 +10,5 @@ public class NewProject {
 	private LocalDate completionDate;
 	private String description;
 	private String title;
+	private Long managerId;
 }

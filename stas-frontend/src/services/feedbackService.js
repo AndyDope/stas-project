@@ -1,21 +1,21 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = 'http://localhost:80/api/feedback'; // The single endpoint for all feedback
+const API_URL = "http://localhost:80/api/feedback"; // The single endpoint for all feedback
 
 const getAuthHeaders = () => {
-    const storedData = JSON.parse(localStorage.getItem('user'));
-    if (storedData && storedData.token) {
-        return { Authorization: 'Bearer ' + storedData.token };
-    }
-    return {};
+  const storedData = JSON.parse(localStorage.getItem("user"));
+  if (storedData && storedData.token) {
+    return { Authorization: "Bearer " + storedData.token };
+  }
+  return {};
 };
 // Helper function to get Client ID
 const getId = () => {
-    const storedData = JSON.parse(localStorage.getItem('user'));
-    if (storedData && storedData.user && storedData.user.id) {
-        return storedData.user.id;
-    }
-    return 0;
+  const storedData = JSON.parse(localStorage.getItem("user"));
+  if (storedData && storedData.user && storedData.user.id) {
+    return storedData.user.id;
+  }
+  return 0;
 };
 
 /**
@@ -24,20 +24,25 @@ const getId = () => {
  *                              OR { taskId, recipientId, rating, content } for managers.
  */
 const submitFeedback = (feedbackData) => {
-    feedbackData.clientId = getId();
-    console.log(feedbackData);
-    
-    return axios.post(`${API_URL}/client`, feedbackData, { headers: getAuthHeaders() });
+  feedbackData.clientId = getId();
+  console.log(feedbackData);
+
+  return axios.post(`${API_URL}/client`, feedbackData, {
+    headers: getAuthHeaders(),
+  });
 };
 
 /**
  * Fetches the feedback history for the currently logged-in user (either given or received).
  */
 const getMyFeedbackHistory = () => {
-    return axios.get(`${API_URL}/client/history`, { headers: getAuthHeaders(), params: { id: getId() } });
+  return axios.get(`${API_URL}/client/history`, {
+    headers: getAuthHeaders(),
+    params: { id: getId() },
+  });
 };
 
 export default {
-    submitFeedback,
-    getMyFeedbackHistory,
+  submitFeedback,
+  getMyFeedbackHistory,
 };

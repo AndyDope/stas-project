@@ -43,4 +43,19 @@ public class ClientServiceImpl implements ClientService {
 		response.put("recentProjects", projectsDto);		
 		return response;
 	}
+
+	@Override
+	public List<Map<String, Object>> getAllManagers() {
+		List<Map<String, Object>> managers = userRepository.findAll().stream()
+				.filter(user -> user.getRole().getRoleName().equals("MANAGER"))
+				.map(user -> {
+					Map<String, Object> managerData = new HashMap<>();
+					managerData.put("id", user.getId());
+					managerData.put("name", user.getName());
+					managerData.put("email", user.getEmail());
+					return managerData;
+				})
+				.toList();
+		return managers;
+	}
 }

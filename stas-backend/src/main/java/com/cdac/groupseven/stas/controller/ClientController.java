@@ -1,5 +1,8 @@
 package com.cdac.groupseven.stas.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -59,9 +62,24 @@ public class ClientController {
 		return ResponseEntity.ok(projectService.getProjectById(id));
 	}
 
-	@PostMapping("/project")
+	@PostMapping("/project/addProject")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
 	public ResponseEntity<ProjectDto> createNewProject(@RequestBody NewProject newProject) {
 		return ResponseEntity.ok(projectService.createNewProject(newProject));
+	}
+	
+	//get /client/getAllManagers
+	@GetMapping("/getAllManagers")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+	public ResponseEntity<List<Map<String,Object>>> getAllManagers() {
+
+		return ResponseEntity.ok(clientService.getAllManagers());
+	}
+	
+	@PostMapping("/project/giveFeedback")
+	public ResponseEntity<String> giveFeedback(@RequestBody Map<String, String> feedback) {
+		// Assuming you have a service method to handle feedback
+		// projectService.giveFeedback(feedback);
+		return ResponseEntity.ok("Feedback submitted successfully");
 	}
 }

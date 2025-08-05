@@ -14,6 +14,7 @@ import com.cdac.groupseven.stas.dto.MemberDto;
 import com.cdac.groupseven.stas.dto.NewProject;
 import com.cdac.groupseven.stas.dto.ProjectDto;
 import com.cdac.groupseven.stas.entity.Project;
+import com.cdac.groupseven.stas.entity.User;
 import com.cdac.groupseven.stas.enums.ProjectStatus;
 import com.cdac.groupseven.stas.enums.TaskStatus;
 import com.cdac.groupseven.stas.repository.ProjectRepository;
@@ -125,13 +126,20 @@ public class ProjectServiceImpl implements ProjectService {
     	if (newProject.getCompletionDate().isBefore(LocalDate.now().plusMonths(1)))
     		throw new RuntimeException("Project completion date should be more than " + oneMonthFromNow);
     	
+    	User manager = userRepository.findById(newProject.getManagerId())
+			.orElseThrow(() -> new RuntimeException("Client with ID: " + newProject.getClientId() + " does not exist."));
+    	
     	Project eProject = new Project();
     	eProject.setTitle(newProject.getTitle());
     	eProject.setDescription(newProject.getDescription());
     	eProject.setEndDate(newProject.getCompletionDate());
     	eProject.setStartDate(LocalDate.now());
     	eProject.setStatus(ProjectStatus.PENDING);
-    	System.out.println(newProject.getClientId());
+    	
+    	eProject.setManager(manager);
+    	
+//    	eProject.setManager(userRepository.findById(newProject.setManagerId(null)));
+//    	System.out.println(newProject.getClientId());
     	eProject.setClient(userRepository.findById(newProject.getClientId()).get());
     	
     	projectRepository.save(eProject);

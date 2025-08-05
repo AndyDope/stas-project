@@ -91,7 +91,21 @@ const navConfig = {
       path: "/developer/dashboard",
     },
     { text: "My Tasks", icon: <AccountTreeIcon />, path: "/developer/tasks" },
-    { text: "My Profile", icon: <SettingsIcon />, path: "/profile" },
+    {
+      text: "Edit My Task", // 👈 New Entry
+      icon: <AssignmentIcon />,
+      path: "/developer/edit-task",
+    },
+    {
+      text: "Feedbacks", // 👈 ADD THIS
+      icon: <CommentIcon />,
+      path: "/developer/feedbacks",
+    },
+    {
+      text: "My Profile",
+      icon: <SettingsIcon />,
+      path: "/developer/myProfile",
+    },
   ],
 };
 

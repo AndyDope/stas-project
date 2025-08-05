@@ -10,15 +10,19 @@ import {
   Alert,
   InputAdornment,
   IconButton,
+  Chip,
+  Stack,
+  Snackbar,
 } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import userService from "../services/userService";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Snackbar } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import EditProfileDialog from "./EditProfileDialog";
+import { MenuItem } from "@mui/material";
 
-const MyProfilePage = () => {
+const DeveloperProfilePage = () => {
+  const storedUser = JSON.parse(localStorage?.getItem("user") || "{}");
+  const token = storedUser?.token;
+
   const { user, updateUser } = useAuth();
   const [profileData, setProfileData] = useState({
     id: "",
@@ -33,13 +37,19 @@ const MyProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  // This useEffect ensures the form is always in sync with the global user state
+  // Skills state
+  const [skills, setSkills] = useState([]);
+  const [availableSkills, setAvailableSkills] = useState([]);
+  const [newSkill, setNewSkill] = useState("");
+  const [skillsLoading, setSkillsLoading] = useState(false);
+
   useEffect(() => {
     if (user) {
       setProfileData({ id: user.id, name: user.name, email: user.email });
+      fetchSkills();
+      fetchAvailableSkills();
     }
   }, [user]);
 
@@ -47,18 +57,14 @@ const MyProfilePage = () => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
 
-  const [isEditing, setIsEditing] = useState(false);
-
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setSuccess("");
     try {
-      // Assuming the backend API returns the fully updated user object
       const response = await userService.updateMyProfile(profileData);
-      updateUser(response.data); // Update the global state
-
+      updateUser(response.data);
       setSuccess("Profile updated successfully!");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to update profile.");
@@ -66,9 +72,7 @@ const MyProfilePage = () => {
       setLoading(false);
     }
   };
-  const [editOpen, setEditOpen] = useState(false);
 
-  // ----------------------------------------------------------------------------------------------------
   const handlePasswordChange = (e) => {
     setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
   };
@@ -130,7 +134,7 @@ const MyProfilePage = () => {
       });
       setTimeout(() => {
         setSnackbar((prev) => ({ ...prev, open: false }));
-      }, 3000); // optional: auto close fallback
+      }, 3000);
       setPasswordData({
         oldPassword: "",
         newPassword: "",
@@ -153,6 +157,80 @@ const MyProfilePage = () => {
 
   const handleSnackbarClose = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
+  };
+
+  // Fetch user's current skills
+  const fetchSkills = async () => {
+    try {
+      setSkillsLoading(true);
+      const res = await fetch(
+        `http://localhost:80/developer/${user.id}/skills`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      setSkills(data);
+      console.log("Fetched skills:", data); // Debugging line to check fetched skills
+    } catch (err) {
+      console.error("Failed to fetch skills:", err);
+    } finally {
+      setSkillsLoading(false);
+    }
+  };
+
+  // Fetch all available skills
+  const fetchAvailableSkills = async () => {
+    try {
+      const res = await fetch(`http://localhost:80/developer/allSkills`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      setAvailableSkills(data);
+      console.log("Fetched available skills:", data); // Debugging line to check available skills
+    } catch (err) {
+      console.error("Failed to fetch available skills:", err);
+    }
+  };
+
+  const handleAddSkill = async () => {
+    if (!newSkill.trim()) return;
+    try {
+      const res = await fetch(
+        `http://localhost:80/developer/${user.id}/addSkills`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ skill: newSkill }),
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to add skill");
+      }
+      setNewSkill("");
+      await fetchSkills(); // Refresh the list
+      setSnackbar({
+        open: true,
+        message: "Skill added successfully!",
+        severity: "success",
+      });
+    } catch (err) {
+      console.error(err);
+      setSnackbar({
+        open: true,
+        message: "Failed to add skill.",
+        severity: "error",
+      });
+    }
   };
 
   return (
@@ -198,7 +276,6 @@ const MyProfilePage = () => {
           </Paper>
         </Grid>
 
-        {/* Change Password Form */}
         <Grid item xs={12} md={6} lg={4}>
           <Paper sx={{ p: 4 }}>
             <Typography variant="h6" gutterBottom>
@@ -266,6 +343,85 @@ const MyProfilePage = () => {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Skills Section */}
+      <Grid container spacing={4} sx={{ mt: 2 }}>
+        <Grid item xs={12} md={10} lg={8}>
+          <Paper
+            sx={{
+              p: 5,
+              backgroundColor: "#f5f5f5",
+              borderRadius: 3,
+              boxShadow: 3,
+            }}
+          >
+            <Typography variant="h5" gutterBottom>
+              My Skills
+            </Typography>
+
+            {skillsLoading ? (
+              <CircularProgress />
+            ) : (
+              <Stack
+                direction="row"
+                flexWrap="wrap"
+                spacing={1.5}
+                sx={{ mb: 3 }}
+              >
+                {skills.map((skill, idx) => (
+                  <Chip
+                    key={idx}
+                    label={skill}
+                    sx={{ fontSize: "1rem", height: 40 }}
+                  />
+                ))}
+              </Stack>
+            )}
+
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={9}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Select Skill"
+                  value={newSkill}
+                  onChange={(e) => setNewSkill(e.target.value)}
+                  sx={{
+                    fontSize: "1rem",
+                    ".MuiInputBase-root": {
+                      height: "56px",
+                      width: 200, // optional: to make it taller
+                    },
+                    ".MuiSelect-select": {
+                      fontSize: "1rem",
+                    },
+                  }}
+                >
+                  {availableSkills
+                    .filter((skill) => !skills.includes(skill))
+                    .map((skill, index) => (
+                      <MenuItem key={index} value={skill}>
+                        {skill}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={3}>
+                <Button
+                  variant="contained"
+                  onClick={handleAddSkill}
+                  disabled={!newSkill}
+                  fullWidth
+                  sx={{ height: "100%", py: 1.5, fontSize: "1rem" }}
+                >
+                  Add Skill
+                </Button>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
+      </Grid>
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
@@ -284,4 +440,4 @@ const MyProfilePage = () => {
   );
 };
 
-export default MyProfilePage;
+export default DeveloperProfilePage;

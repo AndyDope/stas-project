@@ -30,6 +30,9 @@ import ManagerEditTaskPage from "./pages/ManagerEditTaskPage"; // adjust path if
 import ManagerProjectDetails from "./pages/ManagerProjectDetails";
 import ManagerAllTasksPage from "./pages/ManagerAllTasksPage";
 import ManagerProjectsPage from "./pages/ManagerProjectsPage";
+import DeveloperEditTaskPage from "./pages/DeveloperEditTaskPage";
+import DeveloperProfilePage from "./pages/DeveloperProfilePage";
+import DeveloperFeedbacksPage from "./pages/DeveloperFeedbacksPage";
 
 function App() {
   return (
@@ -113,6 +116,24 @@ function App() {
                 <Route
                   path="developer/dashboard"
                   element={<DeveloperDashboardPage />}
+                />
+                <Route
+                  path="/developer/edit-task/:taskId"
+                  element={<DeveloperEditTaskPage />}
+                />
+                <Route
+                  path="/developer/myProfile"
+                  element={<DeveloperProfilePage />}
+                />
+
+                <Route
+                  path="/developer/feedbacks"
+                  element={<DeveloperFeedbacksPage />}
+                />
+
+                <Route
+                  path="/developer/edit-task"
+                  element={<DeveloperEditTaskPage />}
                 />
                 <Route
                   path="developer/tasks"
