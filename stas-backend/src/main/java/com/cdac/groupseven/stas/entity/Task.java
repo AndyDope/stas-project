@@ -1,5 +1,6 @@
 package com.cdac.groupseven.stas.entity;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.cdac.groupseven.stas.enums.TaskStatus;
@@ -27,6 +28,8 @@ public class Task {
     
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+
+    private LocalDate dueDate; 
 
     @ManyToOne
     @JoinColumn(name = "project_id")
