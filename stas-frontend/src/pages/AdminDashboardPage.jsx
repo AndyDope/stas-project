@@ -127,8 +127,8 @@ const AdminDashboardPage = () => {
 						icon={<BuildIcon color="primary" />}
 					/>
 				</Grid>
-				<Grid item xs={12} md={7}>
-					<Paper sx={{ p: 2, height: 380 }}>
+				<Grid size={{ xs: 12, md: 6, lg: 4 }}>
+					<Paper sx={{ p: 2, pb: 6, height: 380 }}>
 						<Typography variant="h6">User Role Distribution</Typography>
 						<ProjectStatusChart data={chartData} label={" total users"} />
 					</Paper>

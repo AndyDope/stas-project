@@ -68,30 +68,6 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 	
-	
-	private void copyProperties(Project newProject,Project oldProject) {
-		if(oldProject == null || newProject == null) {
-			throw new IllegalArgumentException("Source and target objects must not be null");
-		}
-		
-		if(newProject.getTitle() != null)
-			oldProject.setTitle(newProject.getTitle());
-		
-		if(newProject.getDescription() != null)
-			oldProject.setDescription(newProject.getDescription());
-		
-		if(newProject.getStatus() != null)
-			oldProject.setStatus(newProject.getStatus());
-		
-		if(newProject.getStartDate() != null)
-			oldProject.setStartDate(newProject.getStartDate());
-		
-		if(newProject.getEndDate() != null)
-			oldProject.setEndDate(newProject.getEndDate());
-		
-		
-	}
-
 	@Override
 	public ProjectDto getProjectById(Long id) {
 		Optional<Project> project = projectRepository.findById(id);
