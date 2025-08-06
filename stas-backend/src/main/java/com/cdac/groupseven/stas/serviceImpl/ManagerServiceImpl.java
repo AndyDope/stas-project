@@ -369,6 +369,10 @@ public class ManagerServiceImpl implements ManagerService{
         Optional<User> developerOpt = userRepository.findById(request.getAssignedTo());
         Optional<Project> projectOpt = projectRepository.findById(request.getProjectId());
 
+        if(request.getDueDate() != null && request.getDueDate().isBefore(LocalDate.now())) {
+			return false;
+		}
+        
         if (managerOpt.isEmpty() || developerOpt.isEmpty() || projectOpt.isEmpty()) {
             return false;
         }
@@ -379,9 +383,6 @@ public class ManagerServiceImpl implements ManagerService{
         if (!project.getManager().getId().equals(managerId)) {
             return false;
         }
-        // Create Task
-        System.out.println("Creating task for project: " + project.getTitle());
-        System.out.println("Creating task for project: " + project.getTitle());
         Task task = new Task();
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
@@ -403,10 +404,16 @@ public class ManagerServiceImpl implements ManagerService{
 	public boolean updateTask(Long managerId, Long taskId, UpdateTaskRequest request) {
         try {
             // Get task
-            Optional<Task> taskOpt = taskRepository.findById(taskId);
+            
+        	if(request.getDueDate() != null && request.getDueDate().isBefore(LocalDate.now())) {
+        		return false;
+        	}
+        	
+        	Optional<Task> taskOpt = taskRepository.findById(taskId);
             if (taskOpt.isEmpty()) {
                 return false;
             }
+            
 
             Task task = taskOpt.get();
 
@@ -481,31 +488,29 @@ public class ManagerServiceImpl implements ManagerService{
 	@Override
 	public ResponseEntity<List<HashMap<String, Object>>> getReceivedFeedbacks(Long managerId) {
 		List<Project> projects = projectRepository.findByManager_Id(managerId).orElse(List.of());
-        List<HashMap<String, Object>> feedbacks = new ArrayList<>();
-        for (Project project : projects) {
-            for (Task task : project.getTasks()) {
-                List<Feedback> taskFeedbacks = feedbackRepository.findByTask(task);
-                for (Feedback fb : taskFeedbacks) {
-                    if (fb.getAuthor() != null && fb.getAuthor().getRole() != null &&
-                        "client".equalsIgnoreCase(fb.getAuthor().getRole().getRoleName())) {
-                        HashMap<String, Object> map = new HashMap<>();
-                        map.put("content", fb.getContent());
-                        map.put("projectTitle", project.getTitle());
-                        HashMap<String, Object> client = new HashMap<>();
-                        client.put("id", fb.getAuthor().getId());
-                        client.put("name", fb.getAuthor().getName());
-                        map.put("client", client);
-                        HashMap<String, Object> givenTo = new HashMap<>();
-                        givenTo.put("id", managerId);
-                        // Assuming manager name is same for all projects, get from project.getManager()
-                        givenTo.put("name", project.getManager() != null ? project.getManager().getName() : "");
-                        map.put("givenTo", givenTo);
-                        feedbacks.add(map);
-                    }
-                }
-            }
-        }
-        return ResponseEntity.ok(feedbacks);
+		List<HashMap<String, Object>> feedbacks = new ArrayList<>();
+		List<Feedback> taskFeedbacks = feedbackRepository.findByRecipient(userRepository.findById(managerId).get());
+		for (Feedback fb : taskFeedbacks) {
+			if (fb.getAuthor() != null && fb.getAuthor().getRole() != null
+					&& "client".equalsIgnoreCase(fb.getAuthor().getRole().getRoleName())) {
+				HashMap<String, Object> map = new HashMap<>();
+				map.put("content", fb.getContent());
+				map.put("rating", fb.getRating());
+				map.put("projectTitle", fb.getProject().getTitle());
+				HashMap<String, Object> client = new HashMap<>();
+				client.put("id", fb.getAuthor().getId());
+				client.put("name", fb.getAuthor().getName());
+				map.put("client", client);
+				HashMap<String, Object> givenTo = new HashMap<>();
+				givenTo.put("id", managerId);
+				// Assuming manager name is same for all projects, get from project.getManager()
+				givenTo.put("name", fb.getProject().getManager() != null ? fb.getProject().getManager().getName() : "");
+				map.put("givenTo", givenTo);
+				feedbacks.add(map);
+			}
+		}
+
+		return ResponseEntity.ok(feedbacks);
 	}
 	
 	

@@ -44,6 +44,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 		newFeedback.setContent(feedbackData.getContent());
 		newFeedback.setAuthor(userRepository.findByEmail(email).get());
 		newFeedback.setProject(projectRepository.findById(feedbackData.getProjectId()).get());
+		newFeedback.setRecipient(projectRepository.findById(feedbackData.getProjectId()).get().getManager());
 		
 		feedbackRepository.save(newFeedback);		
 		return feedbackData;		

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography, Paper, Rating } from "@mui/material";
 
 const ManagerReceivedFeedbackPage = () => {
   const storedUser = JSON.parse(localStorage?.getItem("user") || "{}");
@@ -37,7 +37,13 @@ const ManagerReceivedFeedbackPage = () => {
           <Typography variant="body2" sx={{ mt: 1 }}>
             <strong>Feedback:</strong> {fb.content}
           </Typography>
-          <Typography variant="caption">Given by: {fb.client.name}</Typography>
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            <strong>Rating:</strong>{" "}
+            <Rating value={fb.rating || 0} precision={0.5} readOnly />
+          </Typography>
+          <Typography variant="caption" sx={{ display: "block", mt: 1 }}>
+            Given by: {fb.client.name}
+          </Typography>
         </Paper>
       ))}
     </Box>
