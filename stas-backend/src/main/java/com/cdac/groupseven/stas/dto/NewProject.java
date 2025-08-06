@@ -11,5 +11,4 @@ public class NewProject {
 	private LocalDate endDate;
 	private String description;
 	private String title;
-	private Long managerId;
 }

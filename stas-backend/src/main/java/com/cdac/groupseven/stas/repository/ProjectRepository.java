@@ -19,4 +19,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByClientEmail(String email);
     Page<Project> findByClientEmail(String email, Pageable pageable);
     int countByManagerId(Long managerId);
+    Optional<List<Project>> findByManager_Id(Long id);
 }

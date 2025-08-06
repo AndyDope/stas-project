@@ -162,137 +162,137 @@ const DeveloperDashboardPage = () => {
   ];
 
   return (
-    <DashboardContainer>
-      <HeaderTitle variant="h4">Developer Dashboard</HeaderTitle>
+		<DashboardContainer>
+			<HeaderTitle variant="h4">Developer Dashboard</HeaderTitle>
 
-      <Grid container spacing={3}>
-        {statItems.map((item, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <StatCardSimple>
-              <CardContent
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "100%",
-                  py: 2,
-                }}
-              >
-                <Box sx={{ mr: 2 }}>{item.icon}</Box>
-                <Box>
-                  <Typography
-                    variant="h5"
-                    sx={{ fontWeight: 600, color: "#333" }}
-                  >
-                    {item.value}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "#666" }}>
-                    {item.title}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </StatCardSimple>
-          </Grid>
-        ))}
+			<Grid container spacing={3}>
+				{statItems.map((item, index) => (
+					<Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
+						<StatCardSimple>
+							<CardContent
+								sx={{
+									display: "flex",
+									alignItems: "center",
+									width: "100%",
+									py: 2,
+								}}
+							>
+								<Box sx={{ mr: 2 }}>{item.icon}</Box>
+								<Box>
+									<Typography
+										variant="h5"
+										sx={{ fontWeight: 600, color: "#333" }}
+									>
+										{item.value}
+									</Typography>
+									<Typography variant="body2" sx={{ color: "#666" }}>
+										{item.title}
+									</Typography>
+								</Box>
+							</CardContent>
+						</StatCardSimple>
+					</Grid>
+				))}
 
-        <Grid item xs={12} md={7}>
-          <ChartCard>
-            <Typography
-              variant="h6"
-              sx={{ mb: 2, color: "#333", fontWeight: 500 }}
-            >
-              Task Status Overview
-            </Typography>
-            <Box sx={{ height: "calc(100% - 40px)" }}>
-              <ProjectStatusChart
-                data={{
-                  total: stats.myTasks,
-                  active: stats.pending,
-                  completed: stats.completed,
-                  overdue: stats.overdue,
-                  pending: stats.pending,
-                }}
-              />
-            </Box>
-          </ChartCard>
-        </Grid>
+				<Grid size={{ xs: 12, md: 6, lg: 4 }}>
+					<ChartCard>
+						<Typography
+							variant="h6"
+							sx={{ mb: 2, color: "#333", fontWeight: 500 }}
+						>
+							Task Status Overview
+						</Typography>
+						<Box sx={{ height: "calc(100% - 40px)" }}>
+							<ProjectStatusChart
+								data={{
+									total: stats.myTasks,
+									active: stats.pending,
+									completed: stats.completed,
+									overdue: stats.overdue,
+									pending: stats.pending,
+								}}
+							/>
+						</Box>
+					</ChartCard>
+				</Grid>
 
-        <Grid item xs={12} md={5}>
-          <TaskCard>
-            <Typography
-              variant="h6"
-              sx={{ mb: 2, width: 300, color: "#333", fontWeight: 500 }}
-            >
-              My Tasks
-            </Typography>
-            <Box sx={{ flex: 1, overflow: "hidden" }}>
-              <List
-                sx={{
-                  height: "100%",
-                  overflow: "auto",
-                  padding: 0,
-                }}
-              >
-                {oldestTasks.length > 0 ? (
-                  oldestTasks.map((task, index) => (
-                    <React.Fragment key={task.id}>
-                      <TaskListItem>
-                        <ListItemText
-                          primary={
-                            <Typography
-                              variant="body1"
-                              sx={{
-                                fontWeight: 500,
-                                color: "#333",
-                                mb: 0.5,
-                              }}
-                            >
-                              {task.title || "Untitled Task"}
-                            </Typography>
-                          }
-                          secondary={
-                            <Box
-                              sx={{
-                                display: "flex",
-                                gap: 1,
-                                alignItems: "center",
-                                flexWrap: "wrap",
-                              }}
-                            >
-                              <Chip
-                                label={`Due: ${formatDueDate(task.dueDate)}`}
-                                color={getStatusColor(task.dueDate)}
-                                size="small"
-                                variant="outlined"
-                              />
-                            </Box>
-                          }
-                        />
-                      </TaskListItem>
-                      {index < oldestTasks.length - 1 && (
-                        <Divider sx={{ my: 0.5 }} />
-                      )}
-                    </React.Fragment>
-                  ))
-                ) : (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      height: "200px",
-                      color: "#666",
-                    }}
-                  >
-                    <Typography variant="body2">No tasks available</Typography>
-                  </Box>
-                )}
-              </List>
-            </Box>
-          </TaskCard>
-        </Grid>
-      </Grid>
-    </DashboardContainer>
-  );
+				<Grid size={{ xs: 12, md: 6, lg: 5 }}>
+					<TaskCard>
+						<Typography
+							variant="h6"
+							sx={{ mb: 2, width: 300, color: "#333", fontWeight: 500 }}
+						>
+							My Tasks
+						</Typography>
+						<Box sx={{ flex: 1, overflow: "hidden" }}>
+							<List
+								sx={{
+									height: "100%",
+									overflow: "auto",
+									padding: 0,
+								}}
+							>
+								{oldestTasks.length > 0 ? (
+									oldestTasks.map((task, index) => (
+										<React.Fragment key={task.id}>
+											<TaskListItem>
+												<ListItemText
+													primary={
+														<Typography
+															variant="body1"
+															sx={{
+																fontWeight: 500,
+																color: "#333",
+																mb: 0.5,
+															}}
+														>
+															{task.title || "Untitled Task"}
+														</Typography>
+													}
+													secondary={
+														<Box
+															sx={{
+																display: "flex",
+																gap: 1,
+																alignItems: "center",
+																flexWrap: "wrap",
+															}}
+														>
+															<Chip
+																label={`Due: ${formatDueDate(task.dueDate)}`}
+																color={getStatusColor(task.dueDate)}
+																size="small"
+																variant="outlined"
+															/>
+														</Box>
+													}
+												/>
+											</TaskListItem>
+											{index < oldestTasks.length - 1 && (
+												<Divider sx={{ my: 0.5 }} />
+											)}
+										</React.Fragment>
+									))
+								) : (
+									<Box
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											height: "200px",
+											color: "#666",
+										}}
+									>
+										<Typography variant="body2">No tasks available</Typography>
+									</Box>
+								)}
+							</List>
+						</Box>
+					</TaskCard>
+				</Grid>
+			</Grid>
+		</DashboardContainer>
+	);
 };
 
 export default DeveloperDashboardPage;

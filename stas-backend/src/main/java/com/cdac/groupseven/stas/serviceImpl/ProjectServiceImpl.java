@@ -127,7 +127,7 @@ public class ProjectServiceImpl implements ProjectService {
     		throw new RuntimeException("Project completion date should be more than " + oneMonthFromNow);
     	
     	User manager = userRepository.findById(newProject.getManagerId())
-			.orElseThrow(() -> new RuntimeException("Client with ID: " + newProject.getClientId() + " does not exist."));
+			.orElseThrow(() -> new RuntimeException("Manager with ID: " + newProject.getManagerId() + " does not exist."));
     	
     	Project eProject = new Project();
     	eProject.setTitle(newProject.getTitle());
@@ -140,7 +140,7 @@ public class ProjectServiceImpl implements ProjectService {
     	
 //    	eProject.setManager(userRepository.findById(newProject.setManagerId(null)));
 //    	System.out.println(newProject.getClientId());
-    	eProject.setClient(userRepository.findById(newProject.getClientId()).get());
+    	eProject.setClient(userRepository.findByEmail(email) .get());
     	
     	projectRepository.save(eProject);
     	

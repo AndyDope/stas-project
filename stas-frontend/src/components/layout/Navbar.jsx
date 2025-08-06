@@ -69,9 +69,10 @@ function Navbar({ onDrawerToggle }) {
 						variant="h6"
 						noWrap
 						component="div"
-						fontFamily={"Courier"}
+						sx={{ fontWeight: 700 }}
+						fontFamily={"Arial"}
 					>
-						Skill-based Task Allocation System
+						{user?.role?.roleName || "Intruder"} Section
 					</Typography>
 				</Box>
 
