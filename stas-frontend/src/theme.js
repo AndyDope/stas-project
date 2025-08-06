@@ -29,7 +29,7 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Abtera Black, Inter, sans-serif',
+    fontFamily: 'Inter, sans-serif',
     h1: {
       fontWeight: 700,
       fontSize: '2rem',
