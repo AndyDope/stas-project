@@ -198,90 +198,86 @@ const MyProfilePage = () => {
           </Paper>
         </Grid>
 
-        {/* Change Password Form */}
-        <Grid item xs={12} md={6} lg={4}>
-          <Paper sx={{ p: 4 }}>
-            <Typography variant="h6" gutterBottom>
-              Change Password
-            </Typography>
-            <Box component="form" onSubmit={handlePasswordSubmit}>
-              {["oldPassword", "newPassword", "confirmPassword"].map(
-                (field, i) => (
-                  <TextField
-                    key={field}
-                    fullWidth
-                    margin="normal"
-                    label={
-                      field === "oldPassword"
-                        ? "Current Password"
-                        : field === "newPassword"
-                        ? "New Password"
-                        : "Confirm New Password"
-                    }
-                    name={field}
-                    type={
-                      showPasswords[field.replace("Password", "")]
-                        ? "text"
-                        : "password"
-                    }
-                    value={passwordData[field]}
-                    onChange={handlePasswordChange}
-                    required
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() =>
-                              togglePasswordVisibility(
-                                field.replace("Password", "")
-                              )
-                            }
-                            edge="end"
-                          >
-                            {showPasswords[field.replace("Password", "")] ? (
-                              <VisibilityOff />
-                            ) : (
-                              <Visibility />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )
-              )}
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ mt: 2 }}
-                disabled={passwordLoading}
-              >
-                {passwordLoading ? (
-                  <CircularProgress size={24} />
-                ) : (
-                  "Change Password"
-                )}
-              </Button>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          severity={snackbar.severity}
-          onClose={handleSnackbarClose}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Box>
-  );
+				{/* Change Password Form */}
+				<Grid size={{ xs: 12, md: 6, lg: 4 }}>
+					<Paper sx={{ p: 4 }}>
+						<Typography variant="h6" gutterBottom>
+							Change Password
+						</Typography>
+						<Box component="form" onSubmit={handlePasswordSubmit}>
+							{["oldPassword", "newPassword", "confirmPassword"].map(
+								(field, i) => (
+									<TextField
+										key={field}
+										fullWidth
+										margin="normal"
+										label={
+											field === "oldPassword"
+												? "Current Password"
+												: field === "newPassword"
+												? "New Password"
+												: "Confirm New Password"
+										}
+										name={field}
+										type={
+											showPasswords[field.replace("Password", "")]
+												? "text"
+												: "password"
+										}
+										value={passwordData[field]}
+										onChange={handlePasswordChange}
+										required
+										InputProps={{
+											endAdornment: (
+												<InputAdornment position="end">
+													<IconButton
+														onClick={() =>
+															togglePasswordVisibility(
+																field.replace("Password", "")
+															)
+														}
+														edge="end"
+													>
+														{showPasswords[field.replace("Password", "")] ? (
+															<VisibilityOff />
+														) : (
+															<Visibility />
+														)}
+													</IconButton>
+												</InputAdornment>
+											),
+										}}
+									/>
+								)
+							)}
+							<Button
+								type="submit"
+								variant="contained"
+								sx={{ mt: 2 }}
+								disabled={passwordLoading}
+							>
+								{passwordLoading ? (
+									<CircularProgress size={24} />
+								) : (
+									"Change Password"
+								)}
+							</Button>
+						</Box>
+					</Paper>
+				</Grid>
+			</Grid>
+			<Snackbar
+				open={snackbar.open}
+				autoHideDuration={3000}
+				onClose={handleSnackbarClose}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+			>
+				<Alert severity={snackbar.severity} onClose={handleSnackbarClose} sx={{ width: "100%" }}>
+					{snackbar.message}
+				</Alert>
+			</Snackbar>
+		</Box>
+	);
 };
 
 export default MyProfilePage;

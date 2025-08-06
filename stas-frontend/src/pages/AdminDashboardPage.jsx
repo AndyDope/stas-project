@@ -10,6 +10,7 @@ import {
 	Divider,
 	CircularProgress,
 	Alert,
+	Chip,
 } from "@mui/material";
 import StatCard from "../components/dashboard/StatCard";
 import ProjectStatusChart from "../components/dashboard/ProjectStatusChart";
@@ -19,8 +20,40 @@ import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import BuildIcon from "@mui/icons-material/Build";
 import adminDashboardService from "../services/adminDashboardService";
 
+// *** THIS IS THE STYLING LOGIC COPIED FROM ProjectListItem.jsx ***
+// It provides the custom background colors for the status badges.
+const getStatusChipStyles = (status) => {
+	const style = {
+		color: "#fff", // White text for good contrast
+		fontWeight: "bold",
+	};
+	switch (status) {
+		case "COMPLETED":
+			style.backgroundColor = "#10B981"; // Green
+			break;
+		case "ONGOING":
+			style.backgroundColor = "#3B82F6"; // Blue
+			break;
+		case "PENDING":
+			style.backgroundColor = "#F59E0B"; // Amber
+			break;
+		case "DELAYED":
+		case "AT RISK":
+			style.backgroundColor = "#EF4444"; // Red
+			break;
+		case "ONHOLD":
+			style.backgroundColor = "#6B7286"; // Medium Gray
+			break;
+		default:
+			style.backgroundColor = "#9E9E9E"; // A neutral gray
+			break;
+	}
+	return style;
+};
+
 const AdminDashboardPage = () => {
 	const [stats, setStats] = useState(null);
+	const [recentProjects, setRecentProjects] = useState([]);
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(true);
 
@@ -28,7 +61,8 @@ const AdminDashboardPage = () => {
 		const fetchStats = async () => {
 			try {
 				const response = await adminDashboardService.getAdminDashboardStats();
-				setStats(response.data);
+				setStats(response.data.stats);
+				setRecentProjects(response.data.recentProjects.reverse());
 			} catch (err) {
 				setError("Failed to load admin dashboard data.");
 				console.error("Error fetching dashboard data:", err);
@@ -51,66 +85,95 @@ const AdminDashboardPage = () => {
 	if (error) {
 		return <Alert severity="error">{error}</Alert>;
 	}
-
-	// Safe access to role distribution
-	const roleData = stats.userRoleDistribution || {};
-	const developerCount = roleData.DEVELOPER || 0;
-	const managerCount = roleData.MANAGER || 0;
-	const clientCount = roleData.CLIENT || 0;
-	const adminCount = roleData.ADMIN || 0;
-
-	const recentActivity = [
-		{ id: 1, text: "Manager 'Jane Doe' created a new project." },
-		{ id: 2, text: "Client 'Big Corp' signed up." },
-		{ id: 3, text: "Developer 'John Smith' completed a task." },
-	];
+	var chartData = {
+		developers: stats.userRoleDistribution.DEVELOPER || 0,
+		managers: stats.userRoleDistribution.MANAGER || 0,
+		clients: stats.userRoleDistribution.CLIENT || 0,
+		admins: stats.userRoleDistribution.ADMIN || 0,
+	};
 
 	return (
 		<Box>
 			<Typography variant="h4" sx={{ mb: 3 }}>
 				Admin Dashboard
 			</Typography>
+
 			<Grid container spacing={3}>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Total Users"
 						value={stats.totalUsers}
 						icon={<PeopleIcon color="primary" />}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Total Projects"
 						value={stats.totalProjects}
 						icon={<AccountTreeIcon color="primary" />}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Tasks Completed"
 						value={stats.taskCompleted}
 						icon={<AssignmentTurnedInIcon color="success" />}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6} md={3}>
+				<Grid size={{ xs: 6, sm: 6, md: 3 }}>
 					<StatCard
 						title="Skills Defined"
 						value={stats.skillsDefined}
 						icon={<BuildIcon color="primary" />}
 					/>
 				</Grid>
-
-				<Grid item xs={12} md={7}>
-					<Paper sx={{ p: 2, height: 380 }}>
+				<Grid size={{ xs: 12, md: 6, lg: 4 }}>
+					<Paper sx={{ p: 2, pb: 6, height: 380 }}>
 						<Typography variant="h6">User Role Distribution</Typography>
-						<ProjectStatusChart
-							data={{
-								developers: stats.userRoleDistribution.DEVELOPER || 0,
-								managers: stats.userRoleDistribution.MANAGER || 0,
-								clients: stats.userRoleDistribution.CLIENT || 0,
-								admins: stats.userRoleDistribution.ADMIN || 0,
-							}}
-						/>
+						<ProjectStatusChart data={chartData} label={" total users"} />
+					</Paper>
+				</Grid>
+
+				<Grid size={{ xs: 12, md: 6, lg: 5 }}>
+					<Paper
+						sx={{ p: 2, height: 380, display: "flex", flexDirection: "column" }}
+					>
+						<Typography variant="h6" gutterBottom>
+							Recent Projects
+						</Typography>
+						<List sx={{ overflow: "auto" }}>
+							{recentProjects.map((project, index) => (
+								<React.Fragment key={project.id}>
+									<ListItem
+										secondaryAction={
+											// *** THIS IS THE CHANGE ***
+											// We replace the `color` prop with the `sx` prop
+											// and use our new styling function.
+											<Chip
+												label={project.status}
+												size="small"
+												sx={getStatusChipStyles(project.status)}
+											/>
+										}
+									>
+										<ListItemText
+											primary={project.title}
+											sx={{
+												marginRight: "120px",
+												"& .MuiListItemText-primary": {
+													whiteSpace: "nowrap",
+													overflow: "hidden",
+													textOverflow: "ellipsis",
+												},
+											}}
+										/>
+									</ListItem>
+									{index < recentProjects.length - 1 && (
+										<Divider component="li" />
+									)}
+								</React.Fragment>
+							))}
+						</List>
 					</Paper>
 				</Grid>
 			</Grid>

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class FeedbackData {
-	private Long clientId;
+//	private Long clientId;
 	private Long projectId;
 	private int rating;
 	private String content;

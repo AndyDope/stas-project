@@ -65,8 +65,13 @@ function Navbar({ onDrawerToggle }) {
 						alt="STAS Logo"
 						sx={{ height: 40, mr: 2 }}
 					/>
-					<Typography variant="h6" noWrap component="div">
-						STAS
+					<Typography
+						variant="h6"
+						noWrap
+						component="div"
+						fontFamily={"Courier"}
+					>
+						Skill-based Task Allocation System
 					</Typography>
 				</Box>
 

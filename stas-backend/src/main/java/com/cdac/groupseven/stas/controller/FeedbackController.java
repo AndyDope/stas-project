@@ -4,11 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdac.groupseven.stas.dto.FeedbackData;
@@ -23,12 +24,14 @@ public class FeedbackController {
 	FeedbackService feedbackService;
 	
 	@GetMapping("/client/history")
-	public ResponseEntity<List<FeedbackHistoryDto>> getMyFeedbackHistory(@RequestParam(value = "id") Long id) {
-		return ResponseEntity.ok(feedbackService.getMyFeedbackHistory(id)); 
+	public ResponseEntity<List<FeedbackHistoryDto>> getMyFeedbackHistory() {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		return ResponseEntity.ok(feedbackService.getMyFeedbackHistory(userDetails.getUsername())); 
 	}
 	
 	@PostMapping("/client")
 	public ResponseEntity<FeedbackData> submitFeedback(@RequestBody FeedbackData feedbackData) {
-		return ResponseEntity.ok(feedbackService.submitFeedback(feedbackData));
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return ResponseEntity.ok(feedbackService.submitFeedback(userDetails.getUsername(), feedbackData));
 	}
 }

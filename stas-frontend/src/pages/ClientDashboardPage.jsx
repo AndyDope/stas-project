@@ -63,7 +63,7 @@ const ClientDashboardPage = () => {
 			try {
 				const response = await clientService.getClientDashboardStats();
 				setStats(response.data.stats);
-				setRecentProjects(response.data.recentProjects);
+				setRecentProjects(response.data.recentProjects.reverse());
 			} catch (err) {
 				setError("Failed to load dashboard data. Please try again later.");
 			} finally {
@@ -140,7 +140,7 @@ const ClientDashboardPage = () => {
 							Projects Overview
 						</Typography>
 						<Box sx={{ height: "calc(100% - 30px)" }}>
-							<ProjectStatusChart data={stats} />
+							<ProjectStatusChart data={stats} label={"# project"} />
 						</Box>
 					</Paper>
 				</Grid>

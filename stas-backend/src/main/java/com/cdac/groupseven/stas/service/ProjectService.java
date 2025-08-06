@@ -11,10 +11,12 @@ public interface ProjectService {
 	void createProject(Project project);
 	
 	ProjectDto getProjectById(Long id);
-	
-	void updateProject(long id,Project project) ;
+//	
+//	void updateProject(long id,Project project) ;
 
 	Page<ProjectDto> findProjectsForClient(String email, int page, int limit);
+	ProjectDto createNewProject(String email, NewProject newProject);
+	ProjectDto clientUpdateProject(Long projectId, NewProject newProject);
 
-	ProjectDto createNewProject(NewProject newProject);
+
 }

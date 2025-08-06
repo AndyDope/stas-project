@@ -6,6 +6,6 @@ import com.cdac.groupseven.stas.dto.FeedbackData;
 import com.cdac.groupseven.stas.dto.FeedbackHistoryDto;
 
 public interface FeedbackService {
-	List<FeedbackHistoryDto> getMyFeedbackHistory(Long id);
-	FeedbackData submitFeedback(FeedbackData feedbackData);
+	List<FeedbackHistoryDto> getMyFeedbackHistory(String id);
+	FeedbackData submitFeedback(String username, FeedbackData feedbackData);
 }
