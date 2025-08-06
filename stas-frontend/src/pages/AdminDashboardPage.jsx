@@ -62,7 +62,7 @@ const AdminDashboardPage = () => {
 			try {
 				const response = await adminDashboardService.getAdminDashboardStats();
 				setStats(response.data.stats);
-				setRecentProjects(response.data.recentProjects);
+				setRecentProjects(response.data.recentProjects.reverse());
 			} catch (err) {
 				setError("Failed to load admin dashboard data.");
 				console.error("Error fetching dashboard data:", err);
