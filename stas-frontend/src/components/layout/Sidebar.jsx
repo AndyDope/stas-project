@@ -29,7 +29,7 @@ const navConfig = {
       path: "/admin/dashboard",
     },
     { text: "User Management", icon: <PeopleIcon />, path: "/admin/users" },
-    { text: "My Profile", icon: <SettingsIcon />, path: "/profile" },
+    { text: "My Profile", icon: <SettingsIcon />, path: "/admin/profile" },
   ],
   MANAGER: [
     { text: "Dashboard", icon: <DashboardIcon />, path: "/manager/dashboard" },

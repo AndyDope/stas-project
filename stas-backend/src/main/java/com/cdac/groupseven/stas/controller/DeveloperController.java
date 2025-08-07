@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,6 +51,12 @@ public class DeveloperController {
 	public ResponseEntity<List<String>> getSkills(@PathVariable("id") Long id) {
 		// Logic to get skills
 		return ResponseEntity.ok(developerService.getSkills(id));
+	}
+	
+	@DeleteMapping("/{id}/removeSkill")
+	public ResponseEntity<String> deleteSkills(@PathVariable("id") Long id, @RequestBody Map<String,String> skills) {
+		// Logic to delete skills
+		return ResponseEntity.ok(developerService.deleteSkills(id, skills));
 	}
 	
 	@GetMapping("/allSkills")

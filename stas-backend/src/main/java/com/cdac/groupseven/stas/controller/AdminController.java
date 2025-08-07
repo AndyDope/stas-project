@@ -1,5 +1,7 @@
 package com.cdac.groupseven.stas.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,8 +21,10 @@ import com.cdac.groupseven.stas.dto.UserManageDto;
 import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
 import com.cdac.groupseven.stas.dto.UserUpdateDto;
 import com.cdac.groupseven.stas.entity.Role;
+import com.cdac.groupseven.stas.entity.Skill;
 import com.cdac.groupseven.stas.entity.User;
 import com.cdac.groupseven.stas.repository.RoleRepository;
+import com.cdac.groupseven.stas.repository.SkillRepository;
 import com.cdac.groupseven.stas.repository.UserRepository;
 import com.cdac.groupseven.stas.service.AdminService;
 
@@ -36,6 +40,9 @@ public class AdminController {
     
     @Autowired
     private RoleRepository roleRepository;
+    
+    @Autowired
+    private SkillRepository	skillRepository;
     
     @GetMapping("/dashboard-data")
     public ResponseEntity<Map<String, Object>> getAdminDashboardData() {
@@ -95,4 +102,44 @@ public class AdminController {
     	userRepository.deleteById(id);
     	return ResponseEntity.noContent().build();
     }
+    
+	@GetMapping("/skills")
+	public ResponseEntity<List<Map<String, Object>>> getAllSkills() {
+		List<Map<String, Object>> allSkills = new ArrayList<>();
+		List<Skill> skills = skillRepository.findAll();
+		
+		skills.forEach(skill -> {
+			Map<String, Object> skillMap = new HashMap<>();
+			skillMap.put("id", skill.getId());
+			skillMap.put("name", skill.getName());
+			allSkills.add(skillMap);
+		});
+		
+		return ResponseEntity.ok(allSkills);
+	}
+	
+	@PostMapping("/skills")
+	public ResponseEntity<String> addSkill(@RequestBody Map<String, String> skillData) {
+		String skillName = skillData.get("name");
+		if (skillName == null || skillName.isEmpty()) {
+			return ResponseEntity.badRequest().body("Skill name is required");
+		}
+		
+		Skill newSkill = new Skill();
+		newSkill.setName(skillName.toUpperCase());
+		skillRepository.save(newSkill);
+		
+		return ResponseEntity.ok("Skill added successfully");
+	}
+	
+	@DeleteMapping("/skills/{id}")
+	public ResponseEntity<String> deleteSkill(@PathVariable Long id) {
+		if (!skillRepository.existsById(id)) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		skillRepository.deleteById(id);
+		return ResponseEntity.ok("Skill deleted successfully");
+	}
+    
 }

@@ -10,16 +10,14 @@ import {
   Alert,
   InputAdornment,
   IconButton,
-  Chip,
-  Stack,
   Snackbar,
-  Autocomplete,
+  Chip,
 } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import userService from "../services/userService";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const DeveloperProfilePage = () => {
+const AdminProfilePage = () => {
   const storedUser = JSON.parse(localStorage?.getItem("user") || "{}");
   const token = storedUser?.token;
 
@@ -34,48 +32,9 @@ const DeveloperProfilePage = () => {
     newPassword: "",
     confirmPassword: "",
   });
+
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
-
-  const [skills, setSkills] = useState([]);
-  const [availableSkills, setAvailableSkills] = useState([]);
-  const [newSkill, setNewSkill] = useState("");
-  const [skillsLoading, setSkillsLoading] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      setProfileData({ id: user.id, name: user.name, email: user.email });
-      fetchSkills();
-      fetchAvailableSkills();
-    }
-  }, [user]);
-
-  const handleProfileChange = (e) => {
-    setProfileData({ ...profileData, [e.target.name]: e.target.value });
-  };
-
-  const handleProfileSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    setSuccess("");
-    try {
-      const response = await userService.updateMyProfile(profileData);
-      updateUser(response.data);
-      setSuccess("Profile updated successfully!");
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to update profile.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePasswordChange = (e) => {
-    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
-  };
-
   const [showPasswords, setShowPasswords] = useState({
     old: false,
     new: false,
@@ -87,6 +46,74 @@ const DeveloperProfilePage = () => {
     message: "",
     severity: "success",
   });
+
+  const [skills, setSkills] = useState([]);
+  const [filteredSkills, setFilteredSkills] = useState([]);
+  const [newSkill, setNewSkill] = useState("");
+  const [addingSkill, setAddingSkill] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setProfileData({ id: user.id, name: user.name, email: user.email });
+      fetchSkills();
+    }
+  }, [user]);
+
+  const fetchSkills = async () => {
+    try {
+      const response = await fetch("http://localhost:80/api/admin/skills", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch skills");
+      const data = await response.json();
+      setSkills(data);
+    } catch (error) {
+      console.error("Failed to fetch skills", error);
+    }
+  };
+
+  useEffect(() => {
+    const lowerSearch = newSkill.toLowerCase();
+    setFilteredSkills(
+      newSkill.trim() === ""
+        ? skills
+        : skills.filter((skill) =>
+            skill.name.toLowerCase().includes(lowerSearch)
+          )
+    );
+  }, [newSkill, skills]);
+
+  const handleProfileChange = (e) => {
+    setProfileData({ ...profileData, [e.target.name]: e.target.value });
+  };
+
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await userService.updateMyProfile(profileData);
+      updateUser(response.data);
+      setSnackbar({
+        open: true,
+        message: "Profile updated successfully!",
+        severity: "success",
+      });
+    } catch (err) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.message || "Failed to update profile.",
+        severity: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+  };
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
@@ -131,9 +158,6 @@ const DeveloperProfilePage = () => {
         message: "Password changed successfully!",
         severity: "success",
       });
-      setTimeout(() => {
-        setSnackbar((prev) => ({ ...prev, open: false }));
-      }, 3000);
       setPasswordData({
         oldPassword: "",
         newPassword: "",
@@ -158,101 +182,63 @@ const DeveloperProfilePage = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
-  const fetchSkills = async () => {
+  const handleAddSkill = async () => {
+    if (!newSkill.trim()) return;
+    setAddingSkill(true);
     try {
-      setSkillsLoading(true);
-      const res = await fetch(
-        `http://localhost:80/developer/${user.id}/skills`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await res.json();
-      setSkills(data);
-    } catch (err) {
-      console.error("Failed to fetch skills:", err);
-    } finally {
-      setSkillsLoading(false);
-    }
-  };
-
-  const fetchAvailableSkills = async () => {
-    try {
-      const res = await fetch(`http://localhost:80/developer/allSkills`, {
+      const response = await fetch("http://localhost:80/api/admin/skills", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({ name: newSkill }),
       });
-      const data = await res.json();
-      setAvailableSkills(data);
-    } catch (err) {
-      console.error("Failed to fetch available skills:", err);
-    }
-  };
 
-  const handleAddSkill = async () => {
-    if (!newSkill.trim()) return;
-    try {
-      const res = await fetch(
-        `http://localhost:80/developer/${user.id}/addSkills`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ skill: newSkill }),
-        }
-      );
-      if (!res.ok) {
-        throw new Error("Failed to add skill");
-      }
+      if (!response.ok) throw new Error("Failed to add skill");
+
       setNewSkill("");
-      await fetchSkills();
+      fetchSkills();
       setSnackbar({
         open: true,
         message: "Skill added successfully!",
         severity: "success",
       });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
       setSnackbar({
         open: true,
-        message: "Failed to add skill.",
+        message: error.message || "Failed to add skill.",
         severity: "error",
       });
+    } finally {
+      setAddingSkill(false);
     }
   };
 
-  const handleDeleteSkill = async (skillToDelete) => {
+  const handleDeleteSkill = async (skillId) => {
     try {
-      const res = await fetch(
-        `http://localhost:80/developer/${user.id}/removeSkill`,
+      const response = await fetch(
+        `http://localhost:80/api/admin/skills/${skillId}`,
         {
           method: "DELETE",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ skill: skillToDelete }),
         }
       );
-      if (!res.ok) throw new Error("Failed to delete skill");
-      await fetchSkills();
+
+      if (!response.ok) throw new Error("Failed to delete skill");
+
+      setSkills((prev) => prev.filter((skill) => skill.id !== skillId));
       setSnackbar({
         open: true,
         message: "Skill removed successfully!",
         severity: "info",
       });
-    } catch (err) {
-      console.error("Failed to delete skill:", err);
+    } catch (error) {
       setSnackbar({
         open: true,
-        message: "Failed to remove skill.",
+        message: "Failed to delete skill.",
         severity: "error",
       });
     }
@@ -264,6 +250,7 @@ const DeveloperProfilePage = () => {
         My Profile
       </Typography>
       <Grid container spacing={4}>
+        {/* Profile Info */}
         <Grid item xs={12} md={6} lg={4}>
           <Paper sx={{ p: 4 }}>
             <Typography variant="h6" gutterBottom>
@@ -301,72 +288,43 @@ const DeveloperProfilePage = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4}>
-          <Paper sx={{ p: 5 }}>
-            <Typography variant="h5" gutterBottom>
+        {/* Skills Section */}
+        <Grid item xs={12} md={12} lg={4}>
+          <Paper sx={{ p: 4 }}>
+            <Typography variant="h6" gutterBottom>
               My Skills
             </Typography>
-
-            {skillsLoading ? (
-              <CircularProgress />
-            ) : (
-              <Stack
-                direction="row"
-                flexWrap="wrap"
-                spacing={1.5}
-                sx={{ mb: 3 }}
+            <Box display="flex" gap={2} alignItems="center">
+              <TextField
+                label="New Skill"
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+                fullWidth
+              />
+              <Button
+                variant="contained"
+                onClick={handleAddSkill}
+                disabled={addingSkill}
               >
-                {skills.map((skill, idx) => (
-                  <Chip
-                    key={idx}
-                    label={skill}
-                    onDelete={() => handleDeleteSkill(skill)}
-                    sx={{ fontSize: "1rem", height: 40 }}
-                  />
-                ))}
-              </Stack>
-            )}
-
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12}>
-                <Autocomplete
-                  fullWidth
-                  options={availableSkills.filter(
-                    (skill) => !skills.includes(skill)
-                  )}
-                  value={newSkill}
-                  onChange={(e, newValue) => setNewSkill(newValue)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Select Skill"
-                      sx={{
-                        fontSize: "1rem",
-                        ".MuiInputBase-root": {
-                          height: "56px",
-                          width: "300px",
-                        },
-                      }}
-                    />
-                  )}
+                {addingSkill ? <CircularProgress size={20} /> : "Add"}
+              </Button>
+            </Box>
+            <Box sx={{ mt: 2, display: "flex", flexWrap: "wrap", gap: 1 }}>
+              {filteredSkills.map((skill) => (
+                <Chip
+                  key={skill.id}
+                  label={skill.name}
+                  onDelete={() => handleDeleteSkill(skill.id)}
+                  color="primary"
+                  variant="outlined"
                 />
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  onClick={handleAddSkill}
-                  disabled={!newSkill}
-                  fullWidth
-                  sx={{ height: "100%", py: 1.5, fontSize: "1rem" }}
-                >
-                  Add Skill
-                </Button>
-              </Grid>
-            </Grid>
+              ))}
+            </Box>
           </Paper>
         </Grid>
 
-        <Grid item xs={12} lg={8}>
+        {/* Change Password */}
+        <Grid item xs={12} md={6} lg={4}>
           <Paper sx={{ p: 4 }}>
             <Typography variant="h6" gutterBottom>
               Change Password
@@ -452,4 +410,4 @@ const DeveloperProfilePage = () => {
   );
 };
 
-export default DeveloperProfilePage;
+export default AdminProfilePage;

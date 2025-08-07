@@ -190,6 +190,25 @@ public class DeveloperServiceImpl implements DeveloperService{
 	    }
 	    return result;
 	}
+
+
+	@Override
+	public String deleteSkills(Long id, Map<String, String> skills) {
+		User developer = userRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Developer not found with id: " + id));
+		
+		if(!skills.containsKey("skill")) {
+			throw new RuntimeException("Skills not provided");
+		}
+		developer.getUserSkills().stream()
+			.filter(userSkill -> userSkill.getSkill().getName().equalsIgnoreCase(skills.get("skill")))
+			.findFirst()
+			.ifPresent(userSkill -> {
+				userSkillRepository.delete(userSkill);
+			});
+		
+		return "Deleted skill successfully";
+	}
 	
 	
 

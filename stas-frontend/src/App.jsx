@@ -15,6 +15,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminProfilePage from "./pages/AdminProfilePage";
 import UserManagementPage from "./pages/UserManagementPage";
 import ManagerDashboardPage from "./pages/ManagerDashboardPage";
 import ClientDashboardPage from "./pages/ClientDashboardPage";
@@ -57,6 +58,7 @@ function App() {
                   element={<AdminDashboardPage />}
                 />
                 <Route path="admin/users" element={<UserManagementPage />} />
+                <Route path="admin/profile" element={<AdminProfilePage />} />
               </Route>
 
               <Route element={<RoleBasedRoute allowedRoles={["MANAGER"]} />}>

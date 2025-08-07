@@ -23,4 +23,6 @@ public interface DeveloperService {
 
 	List<Map<String, Object>> getFeedbacks(Long userId);
 
+	String deleteSkills(Long id, Map<String, String> skills);
+
 }
