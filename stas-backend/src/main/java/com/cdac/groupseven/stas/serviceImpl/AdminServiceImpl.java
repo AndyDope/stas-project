@@ -88,7 +88,7 @@ public class AdminServiceImpl implements AdminService {
         List<Role> roles = roleRepository.findAll();
         for (Role role : roles) {
             int count = userRepository.countByRole(role); // you must implement this
-            roleDistribution.put(role.getRoleName(), count);
+            roleDistribution.put(role.getRoleName().toUpperCase(),count);
         }
                 
         Map<String, Object> dashboardData = new HashMap<>();
