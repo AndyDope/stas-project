@@ -13,4 +13,5 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
 		// Additional query methods can be defined here if needed
 	// For example, to find a skill by name:
 	Optional<Skill> findByName(String name);
+	Boolean existsByName(String name);
 }

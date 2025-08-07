@@ -125,6 +125,10 @@ public class AdminController {
 			return ResponseEntity.badRequest().body("Skill name is required");
 		}
 		
+		if(skillRepository.existsByName(skillName.toUpperCase())) {
+			return ResponseEntity.badRequest().body("Skill already exists");
+		}
+		
 		Skill newSkill = new Skill();
 		newSkill.setName(skillName.toUpperCase());
 		skillRepository.save(newSkill);

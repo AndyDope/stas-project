@@ -205,9 +205,11 @@ const AdminProfilePage = () => {
         severity: "success",
       });
     } catch (error) {
+      console.log(error.message);
       setSnackbar({
         open: true,
-        message: error.message || "Failed to add skill.",
+        message: error.message,
+        // || "Failed to add skill.",
         severity: "error",
       });
     } finally {
