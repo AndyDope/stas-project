@@ -46,15 +46,14 @@ public class Task {
     private List<TaskSkill> requiredSkills;
     
     public TaskStatus getStatus() {
-        if (status != TaskStatus.COMPLETED && dueDate != null && dueDate.isBefore(LocalDate.now())) {
-        	setStatus(TaskStatus.OVERDUE);
+        if (status != TaskStatus.COMPLETED && status!=TaskStatus.INREVIEW && dueDate != null && dueDate.isBefore(LocalDate.now())) {
             return status;
         }
         return status;
     }
     
     public void setStatus(TaskStatus status) {
-        if (status != TaskStatus.COMPLETED && dueDate != null && dueDate.isBefore(LocalDate.now())) {
+        if (status != TaskStatus.COMPLETED && status!=TaskStatus.INREVIEW && dueDate != null && dueDate.isBefore(LocalDate.now())) {
             this.status = TaskStatus.OVERDUE;
         } else {
             this.status = status;

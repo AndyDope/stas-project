@@ -82,7 +82,7 @@ public class Project {
 
     
     public void setStatus(ProjectStatus status) {
-        if (status != ProjectStatus.COMPLETED && endDate != null && endDate.isBefore(LocalDate.now())) {
+        if (status != ProjectStatus.COMPLETED && this.status != ProjectStatus.ONHOLD && endDate != null && endDate.isBefore(LocalDate.now())) {
             this.status = ProjectStatus.DELAYED;
         } else {
             this.status = status;
@@ -90,8 +90,7 @@ public class Project {
     }
 
     public ProjectStatus getStatus() {
-        if (this.status != ProjectStatus.COMPLETED && endDate != null && endDate.isBefore(LocalDate.now())) {
-        	setStatus(ProjectStatus.DELAYED);
+        if (this.status != ProjectStatus.COMPLETED && this.status != ProjectStatus.ONHOLD && endDate != null && endDate.isBefore(LocalDate.now())) {
             return ProjectStatus.DELAYED;
         }
         return this.status;
