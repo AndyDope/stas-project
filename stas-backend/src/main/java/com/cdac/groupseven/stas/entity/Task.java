@@ -25,9 +25,10 @@ public class Task {
 
     private String title;
     private String description;
-
+    
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+
     private LocalDate dueDate; 
 
     @ManyToOne
@@ -43,4 +44,19 @@ public class Task {
 
     @OneToMany(mappedBy = "task")
     private List<TaskSkill> requiredSkills;
+    
+    public TaskStatus getStatus() {
+        if (status != TaskStatus.COMPLETED && status!=TaskStatus.INREVIEW && dueDate != null && dueDate.isBefore(LocalDate.now())) {
+            return status;
+        }
+        return status;
+    }
+    
+    public void setStatus(TaskStatus status) {
+        if (status != TaskStatus.COMPLETED && status!=TaskStatus.INREVIEW && dueDate != null && dueDate.isBefore(LocalDate.now())) {
+            this.status = TaskStatus.OVERDUE;
+        } else {
+            this.status = status;
+        }
+    }
 }

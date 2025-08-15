@@ -9,6 +9,12 @@ import {
 	Button,
 	CircularProgress,
 	Alert,
+	FormControl,
+	InputLabel,
+	Select,
+	ListSubheader,
+	Divider,
+	MenuItem,
 } from "@mui/material";
 
 const CreateProjectPage = () => {
@@ -16,15 +22,49 @@ const CreateProjectPage = () => {
 	// and an onSubmit handler to send the data to the backend.
 
 	const [formData, setFormData] = useState({
-		clientId: "",
 		title: "",
 		description: "",
-		completionDate: "",
+		endDate: "",
+		managerId: "",
 	});
-	const [isLoading, setIsLoading] = useState(false);
+	const [managers, setManagers] = useState({
+		available: [],
+		busy: [],
+		tooBusy: [],
+	});
+	const [loading, setLoading] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState(null);
 	const [success, setSuccess] = useState(null);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const fetchManagers = async () => {
+			try {
+				setLoading(true);
+				const response = await clientService.getAvailableManagers();
+				const rawManagers = response.data;
+
+				// Process and group managers based on project count
+				const available = rawManagers
+					.filter((m) => m.projectCount <= 2)
+					.sort((a, b) => a.projectCount - b.projectCount);
+				const busy = rawManagers
+					.filter((m) => m.projectCount >= 3 && m.projectCount <= 4)
+					.sort((a, b) => a.projectCount - b.projectCount);
+				const tooBusy = rawManagers
+					.filter((m) => m.projectCount > 4)
+					.sort((a, b) => a.projectCount - b.projectCount);
+
+				setManagers({ available, busy, tooBusy });
+			} catch (err) {
+				setError("Failed to load available managers.");
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchManagers();
+	}, []);
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,45 +72,30 @@ const CreateProjectPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setIsLoading(true);
+		setSubmitting(true);
 		setError(null);
 		setSuccess(null);
 
 		try {
 			await clientService.createNewProject(formData);
-			setSuccess("Project request submitted!");
+			setSuccess("Project request submitted successfully!");
 			setTimeout(() => navigate("/client/dashboard"), 2000);
 		} catch (err) {
 			setError(
-				err.response?.data?.message ||
-					"Could not create new project. Please try again later."
+				err.response?.data ||
+					"Failed to submit project. Please try again later."
 			);
-			setIsLoading(false);
+			setSubmitting(false);
 		}
 	};
 
-	// Use JWT Token to get User info
-	useEffect(() => {
-		try {
-			const storedData = JSON.parse(localStorage.getItem("user"));
-			if (storedData && storedData.user) {
-				// Use JWT Token to get User info
-				setFormData({ ...formData, clientId: storedData.user.id });
-			}
-		} catch (error) {
-			setError("Please login to continue.");
-			localStorage.removeItem("user");
-			setTimeout(() => navigate("/login"), 2000);
-		}
-	}, []);
-
-	// const handleSubmit = (event) => {
-	// 	event.preventDefault();
-	// 	// Logic to submit the project request would go here
-
-	// 	console.log("Project request submitted.");
-	// 	// You could show a success message or redirect the user
-	// };
+	if (loading) {
+		return (
+			<Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+				<CircularProgress />
+			</Box>
+		);
+	}
 
 	return (
 		<Box>
@@ -105,7 +130,7 @@ const CreateProjectPage = () => {
 						name="description"
 						fullWidth
 						multiline
-						rows={6}
+						rows={4}
 						label="Project Description"
 						margin="normal"
 						placeholder="Describe your project goals, key features, target audience, and any other important details."
@@ -115,7 +140,7 @@ const CreateProjectPage = () => {
 					<TextField
 						fullWidth
 						required
-						name="completionDate"
+						name="endDate"
 						type="date"
 						label="Ideal Completion Date"
 						margin="normal"
@@ -123,6 +148,46 @@ const CreateProjectPage = () => {
 						value={formData.completionDate}
 						onChange={handleChange}
 					/>
+
+					<FormControl fullWidth margin="normal" required>
+						<InputLabel id="manager-select-label">Assign a Manager</InputLabel>
+						<Select
+							labelId="manager-select-label"
+							name="managerId"
+							value={formData.managerId}
+							label="Assign a Manager"
+							onChange={handleChange}
+						>
+							<ListSubheader sx={{ color: "success.main", fontWeight: "bold" }}>
+								Available ({managers.available.length})
+							</ListSubheader>
+							{managers.available.map((m) => (
+								<MenuItem key={m.id} value={m.id}>
+									{m.name} ({m.projectCount} projects)
+								</MenuItem>
+							))}
+
+							<Divider />
+							<ListSubheader sx={{ color: "warning.main", fontWeight: "bold" }}>
+								Busy ({managers.busy.length})
+							</ListSubheader>
+							{managers.busy.map((m) => (
+								<MenuItem key={m.id} value={m.id}>
+									{m.name} ({m.projectCount} projects)
+								</MenuItem>
+							))}
+
+							<Divider />
+							<ListSubheader sx={{ color: "error.main", fontWeight: "bold" }}>
+								Too Busy ({managers.tooBusy.length})
+							</ListSubheader>
+							{managers.tooBusy.map((m) => (
+								<MenuItem key={m.id} value={m.id} disabled>
+									{m.name} ({m.projectCount} projects)
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
 
 					{error && (
 						<Alert severity="error" sx={{ mt: 2, width: "100%" }}>
@@ -135,8 +200,14 @@ const CreateProjectPage = () => {
 						</Alert>
 					)}
 
-					<Button type="submit" variant="contained" size="large" sx={{ mt: 3 }}>
-						{isLoading ? (
+					<Button
+						type="submit"
+						variant="contained"
+						size="large"
+						sx={{ mt: 3 }}
+						disabled={submitting}
+					>
+						{submitting ? (
 							<CircularProgress size={24} color="inherit" />
 						) : (
 							"Submit Project Request"

@@ -27,6 +27,8 @@ public class ProjectDto {
 	private Set<MemberDto> members;
 	private Set<TaskDto> tasks;
 	private Integer openTasks;
+	
+	// constructor to copy Project Entity properties into this ProjectDto
 	public ProjectDto(Project project) {
 		
 		id = project.getId();

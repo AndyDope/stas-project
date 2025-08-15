@@ -13,4 +13,6 @@ import com.cdac.groupseven.stas.entity.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<List<User>> findByRole(Role role);
+    int countByRole(Role role); //for counting users by specific role
+    List<User> findAllByRole(Role role); //to return all users with a specific role    
 }

@@ -16,8 +16,12 @@ import {
 	CircularProgress,
 	Alert,
 	Button,
+	IconButton,
 } from "@mui/material";
 import clientService from "../services/clientService";
+import EditProjectModal from "../components/projects/EditProjectModal";
+import Snackbar from "@mui/material/Snackbar";
+import EditIcon from "@mui/icons-material/Edit";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 
 // Helper for Project status (no change here)
@@ -29,6 +33,9 @@ const getProjectStatusChipColor = (status) => {
 			return "primary";
 		case "PENDING":
 			return "warning";
+		case "DELAYED":
+		case "AT RISK":
+			return "error";
 		default:
 			return "default";
 	}
@@ -66,6 +73,12 @@ const ClientProjectDetailPage = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
+	//for creating the snakbar alert
+	const [snackbarOpen, setSnackbarOpen] = useState(false);
+	const [snackbarMessage, setSnackbarMessage] = useState("");
+
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
 	useEffect(() => {
 		const fetchProjectDetails = async () => {
 			try {
@@ -79,6 +92,21 @@ const ClientProjectDetailPage = () => {
 		};
 		fetchProjectDetails();
 	}, [projectId]);
+
+	const handleProjectUpdate = async (updatedData, successMessage) => {
+		try {
+			const response = await clientService.updateProject(
+				projectId,
+				updatedData
+			);
+			setSnackbarMessage("Project updated successfully!");
+			setSnackbarOpen(true);
+			// This is the key: update the page's state with the new data from the backend
+			setProject(response.data);
+		} catch (error) {
+			throw error; // Re-throw error to be caught by the modal's handler
+		}
+	};
 
 	const handleGiveFeedbackClick = () => {
 		// Navigate to the feedback page and pass the project ID in the state
@@ -119,6 +147,14 @@ const ClientProjectDetailPage = () => {
 						sx={getChipStyle()}
 						color={getProjectStatusChipColor(project.status)}
 					/>
+					{project.status !== "COMPLETED" && (
+						<IconButton
+							color="primary"
+							onClick={() => setIsEditModalOpen(true)}
+						>
+							<EditIcon />
+						</IconButton>
+					)}
 					{project.status === "COMPLETED" && (
 						<Button
 							variant="contained"
@@ -234,6 +270,27 @@ const ClientProjectDetailPage = () => {
 					</Paper>
 				</Grid>
 			</Grid>
+			<EditProjectModal
+				open={isEditModalOpen}
+				onClose={() => setIsEditModalOpen(false)}
+				project={project}
+				onSave={handleProjectUpdate}
+				status={project.status}
+			/>
+			<Snackbar
+				open={snackbarOpen}
+				autoHideDuration={3000}
+				onClose={() => setSnackbarOpen(false)}
+				anchorOrigin={{ vertical: "top", horizontal: "center" }}
+			>
+				<Alert
+					onClose={() => setSnackbarOpen(false)}
+					severity="success"
+					sx={{ width: "100%" }}
+				>
+					{snackbarMessage}
+				</Alert>
+			</Snackbar>
 		</Box>
 	);
 };

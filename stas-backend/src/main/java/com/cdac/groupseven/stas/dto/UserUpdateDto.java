@@ -7,4 +7,5 @@ public class UserUpdateDto {
 	private Long id;
 	private String name;
 	private String email;
+	private String role;
 }

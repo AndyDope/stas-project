@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.cdac.groupseven.stas.dto.FeedbackData;
 import com.cdac.groupseven.stas.dto.FeedbackHistoryDto;
 import com.cdac.groupseven.stas.entity.Feedback;
+import com.cdac.groupseven.stas.enums.ProjectStatus;
 import com.cdac.groupseven.stas.repository.FeedbackRepository;
 import com.cdac.groupseven.stas.repository.ProjectRepository;
 import com.cdac.groupseven.stas.repository.UserRepository;
@@ -26,18 +27,24 @@ public class FeedbackServiceImpl implements FeedbackService {
 	ProjectRepository projectRepository;
 	
 	@Override
-	public List<FeedbackHistoryDto> getMyFeedbackHistory(Long id) {
-		List<Feedback> feedbacksGiven = userRepository.findById(id).get().getFeedbacksGiven();		
+	public List<FeedbackHistoryDto> getMyFeedbackHistory(String email) {
+		List<Feedback> feedbacksGiven = userRepository.findByEmail(email).get().getFeedbacksGiven();		
 		return feedbacksGiven != null ? feedbacksGiven.stream().map(feedback -> new FeedbackHistoryDto(feedback)).toList() : null;
 	}
 	
 	@Override
-	public FeedbackData submitFeedback(FeedbackData feedbackData) {
+	public FeedbackData submitFeedback(String email, FeedbackData feedbackData) {
+		
+		if (!projectRepository.findById(feedbackData.getProjectId()).get().getStatus().equals(ProjectStatus.COMPLETED)) {
+			throw new RuntimeException("Can't give feedback on incomplete projects");
+		}
+		
 		Feedback newFeedback = new Feedback();
 		newFeedback.setRating(feedbackData.getRating());
 		newFeedback.setContent(feedbackData.getContent());
-		newFeedback.setAuthor(userRepository.findById(feedbackData.getClientId()).get());
+		newFeedback.setAuthor(userRepository.findByEmail(email).get());
 		newFeedback.setProject(projectRepository.findById(feedbackData.getProjectId()).get());
+		newFeedback.setRecipient(projectRepository.findById(feedbackData.getProjectId()).get().getManager());
 		
 		feedbackRepository.save(newFeedback);		
 		return feedbackData;		

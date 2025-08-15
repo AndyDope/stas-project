@@ -1,5 +1,10 @@
 package com.cdac.groupseven.stas.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -8,11 +13,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cdac.groupseven.stas.dto.AvailableManager;
 import com.cdac.groupseven.stas.dto.NewProject;
 import com.cdac.groupseven.stas.dto.ProjectDto;
 import com.cdac.groupseven.stas.service.ClientService;
@@ -58,10 +65,29 @@ public class ClientController {
 
 		return ResponseEntity.ok(projectService.getProjectById(id));
 	}
+	
+	@PutMapping("/projects/{projectId}")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+	public ResponseEntity<ProjectDto> updateProject(@PathVariable Long projectId, @RequestBody NewProject newProject) {
+		return ResponseEntity.ok(projectService.clientUpdateProject(projectId, newProject));
+//		return null;
+	}
 
 	@PostMapping("/project")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
-	public ResponseEntity<ProjectDto> createNewProject(@RequestBody NewProject newProject) {
-		return ResponseEntity.ok(projectService.createNewProject(newProject));
+	public ResponseEntity<?> createNewProject(@RequestBody NewProject newProject) {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		try {
+			return ResponseEntity.ok(projectService.createNewProject(userDetails.getUsername(), newProject));
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body("Error creating project: " + e.getMessage());
+        }
+	}
+	
+	@GetMapping("/available-managers")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+	public ResponseEntity<List<AvailableManager>> getAvailableManagers() {
+		return ResponseEntity.ok(clientService.getAvailableManagers());
 	}
 }

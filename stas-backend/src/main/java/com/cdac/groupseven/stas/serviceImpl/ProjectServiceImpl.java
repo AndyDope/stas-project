@@ -14,11 +14,15 @@ import com.cdac.groupseven.stas.dto.MemberDto;
 import com.cdac.groupseven.stas.dto.NewProject;
 import com.cdac.groupseven.stas.dto.ProjectDto;
 import com.cdac.groupseven.stas.entity.Project;
+import com.cdac.groupseven.stas.entity.User;
+import com.cdac.groupseven.stas.entity.User;
 import com.cdac.groupseven.stas.enums.ProjectStatus;
 import com.cdac.groupseven.stas.enums.TaskStatus;
 import com.cdac.groupseven.stas.repository.ProjectRepository;
 import com.cdac.groupseven.stas.repository.UserRepository;
 import com.cdac.groupseven.stas.service.ProjectService;
+
+import jdk.jshell.spi.ExecutionControl.RunException;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -32,47 +36,44 @@ public class ProjectServiceImpl implements ProjectService {
 		projectRepository.save(project);
 	}		
 	
-	public void updateProject(long id,Project project) {
-		Optional<Project> existingProject = projectRepository.findById(id);
-		if(existingProject.isPresent()) {
-			Project oldProject = existingProject.get();
-			copyProperties(project, oldProject);
-			projectRepository.save(oldProject);
+	@Override
+	public ProjectDto clientUpdateProject(Long projectId, NewProject newData) {
+		LocalDate oneMonthFromNow = LocalDate.now().plusMonths(1);
+    	if (newData.getEndDate().isBefore(LocalDate.now().plusMonths(1)))
+    		throw new RuntimeException("Project completion date should be more than " + oneMonthFromNow);    	
+		
+		Optional<Project> project = projectRepository.findById(projectId);
+		
+		if(project.isPresent()) {
+					
+			Project updatedProject = project.get();
+			
+			if (updatedProject.getStatus().equals(ProjectStatus.COMPLETED)) {
+				throw new RuntimeException("Can not update completed project!");
+			}
+			
+			if (updatedProject.getStatus().equals(ProjectStatus.PENDING) || updatedProject.getStatus().equals(ProjectStatus.ONHOLD)) {
+				Optional<User> manager = userRepository.findById(newData.getManagerId());
+				if (manager.isPresent()) updatedProject.setManager(manager.get());
+			}
+			
+			updatedProject.setTitle(newData.getTitle());
+			updatedProject.setDescription(newData.getDescription());
+			updatedProject.setEndDate(newData.getEndDate());
+			
+			projectRepository.save(updatedProject);
+			
+			return new ProjectDto(projectRepository.findById(projectId).get());
 		} else {
-			throw new IllegalArgumentException("Project with id " + id + " does not exist");
+			throw new IllegalArgumentException("Project with id " + projectId + " does not exist");
 		}
 	}
 	
-	
-	private void copyProperties(Project newProject,Project oldProject) {
-		if(oldProject == null || newProject == null) {
-			throw new IllegalArgumentException("Source and target objects must not be null");
-		}
-		
-		if(newProject.getTitle() != null)
-			oldProject.setTitle(newProject.getTitle());
-		
-		if(newProject.getDescription() != null)
-			oldProject.setDescription(newProject.getDescription());
-		
-		if(newProject.getStatus() != null)
-			oldProject.setStatus(newProject.getStatus());
-		
-		if(newProject.getStartDate() != null)
-			oldProject.setStartDate(newProject.getStartDate());
-		
-		if(newProject.getEndDate() != null)
-			oldProject.setEndDate(newProject.getEndDate());
-		
-		
-	}
-
 	@Override
 	public ProjectDto getProjectById(Long id) {
 		Optional<Project> project = projectRepository.findById(id);
-		if (project.isPresent()) {
-			return new ProjectDto(project.get());
-		}
+		if (project.isPresent()) return new ProjectDto(project.get());
+		
 		throw new RuntimeException("Project with ID:" + id + " is not present.");
 	}
 	
@@ -120,19 +121,26 @@ public class ProjectServiceImpl implements ProjectService {
     }
     
     @Override
-    public ProjectDto createNewProject(NewProject newProject) {
+    public ProjectDto createNewProject(String email, NewProject newProject) {
     	LocalDate oneMonthFromNow = LocalDate.now().plusMonths(1);
-    	if (newProject.getCompletionDate().isBefore(LocalDate.now().plusMonths(1)))
+    	if (newProject.getEndDate().isBefore(LocalDate.now().plusMonths(1)))
     		throw new RuntimeException("Project completion date should be more than " + oneMonthFromNow);
+    	
+    	User manager = userRepository.findById(newProject.getManagerId())
+			.orElseThrow(() -> new RuntimeException("Manager with ID: " + newProject.getManagerId() + " does not exist."));
     	
     	Project eProject = new Project();
     	eProject.setTitle(newProject.getTitle());
     	eProject.setDescription(newProject.getDescription());
-    	eProject.setEndDate(newProject.getCompletionDate());
+    	eProject.setEndDate(newProject.getEndDate());
     	eProject.setStartDate(LocalDate.now());
     	eProject.setStatus(ProjectStatus.PENDING);
-    	System.out.println(newProject.getClientId());
-    	eProject.setClient(userRepository.findById(newProject.getClientId()).get());
+    	
+    	eProject.setManager(manager);
+    	
+//    	eProject.setManager(userRepository.findById(newProject.setManagerId(null)));
+//    	System.out.println(newProject.getClientId());
+    	eProject.setClient(userRepository.findByEmail(email) .get());
     	
     	projectRepository.save(eProject);
     	

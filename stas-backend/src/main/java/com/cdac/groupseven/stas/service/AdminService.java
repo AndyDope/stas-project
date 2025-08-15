@@ -1,17 +1,12 @@
 package com.cdac.groupseven.stas.service;
 
-import java.util.List;
+import java.util.Map;
 
-import com.cdac.groupseven.stas.dto.ProjectAdminDto;
+import com.cdac.groupseven.stas.dto.UserManageDto;
+import com.cdac.groupseven.stas.dto.UserSignupRequestDto;
 
 public interface AdminService {
 
-	int getTotalProjectCount();
-
-	int getTotalDeveloperCount();
-
-	int getTotalActiveProjectsCount();
-
-	List<ProjectAdminDto> getAllProjects();
-
+	Map<String, Object> getAdminDashboardData();
+	UserManageDto createAdminUser(UserSignupRequestDto dto);
 }

@@ -80,6 +80,23 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Task> tasks = new HashSet<>();
 
+    
+    public void setStatus(ProjectStatus status) {
+        if (status != ProjectStatus.COMPLETED && this.status != ProjectStatus.ONHOLD && endDate != null && endDate.isBefore(LocalDate.now())) {
+            this.status = ProjectStatus.DELAYED;
+        } else {
+            this.status = status;
+        }
+    }
+
+    public ProjectStatus getStatus() {
+        if (this.status != ProjectStatus.COMPLETED && this.status != ProjectStatus.ONHOLD && endDate != null && endDate.isBefore(LocalDate.now())) {
+            return ProjectStatus.DELAYED;
+        }
+        return this.status;
+    }
+
+    
     // --- Custom equals() and hashCode() for safe JPA operations ---
     @Override
     public boolean equals(Object o) {

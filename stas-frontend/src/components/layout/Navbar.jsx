@@ -65,8 +65,14 @@ function Navbar({ onDrawerToggle }) {
 						alt="STAS Logo"
 						sx={{ height: 40, mr: 2 }}
 					/>
-					<Typography variant="h6" noWrap component="div">
-						STAS
+					<Typography
+						variant="h6"
+						noWrap
+						component="div"
+						sx={{ fontWeight: 700 }}
+						fontFamily={"Arial"}
+					>
+						{user?.role?.roleName || "Intruder"} Section
 					</Typography>
 				</Box>
 

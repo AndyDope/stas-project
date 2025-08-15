@@ -24,5 +24,4 @@ public class UserTask {
     @ManyToOne
     private Task task;
 
-    private String status; // e.g., Assigned, In Progress, Completed
 }
